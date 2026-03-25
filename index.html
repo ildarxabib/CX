@@ -2,179 +2,188 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>CX Prioritization Matrix — Калькулятор</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор скоринга продуктовых запусков</title>
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #f5f7fa; color: #2c3e50; padding: 20px; line-height: 1.4; }
-        .container { max-width: 1100px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1 { text-align: center; font-size: 24px; margin-bottom: 30px; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        body { font-family: sans-serif; line-height: 1.4; color: #333; max-width: 950px; margin: 20px auto; padding: 20px; background-color: #f9f9f9; }
+        h1 { text-align: center; font-size: 22px; color: #2c3e50; }
         
-        .matrix-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; table-layout: fixed; }
-        th, td { border: 1px solid #dee2e6; padding: 15px; vertical-align: top; }
-        th { background: #f8f9fa; text-align: center; font-weight: bold; }
-        .col-criterion { width: 20%; font-weight: bold; background: #f8f9fa; }
+        table { width: 100%; border-collapse: collapse; background: white; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        th, td { border: 1px solid #ddd; padding: 12px; vertical-align: top; }
+        th { background-color: #f2f2f2; font-weight: bold; text-align: center; font-size: 13px; }
         
-        .option-cell { cursor: pointer; transition: 0.2s; position: relative; }
-        .option-cell:hover { background: #f0f7ff; }
-        .option-cell.selected { background: #e3f2fd; border: 2px solid #2196f3; }
+        .criterion-name { font-weight: bold; width: 20%; background-color: #fafafa; }
+        label { display: block; cursor: pointer; height: 100%; }
+        .opt-box { display: flex; align-items: flex-start; gap: 8px; }
+        input[type="radio"] { margin-top: 3px; cursor: pointer; }
         
-        .option-title { font-weight: bold; display: block; margin-bottom: 8px; font-size: 0.95em; }
-        ul { padding-left: 18px; margin: 0; font-size: 0.85em; color: #444; }
-        li { margin-bottom: 4px; }
-        
-        .sub-checks { margin-top: 10px; padding-left: 10px; font-size: 0.85em; border-left: 2px solid #ddd; }
-        .sub-checks label { display: block; margin-bottom: 3px; cursor: pointer; }
+        .opt-title { font-weight: bold; font-size: 14px; display: block; }
+        .opt-desc { font-size: 12px; color: #666; display: block; margin-top: 2px; }
 
-        #sticky-result { position: sticky; bottom: 0; background: #fff; padding: 20px; border-top: 3px solid #3498db; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -4px 10px rgba(0,0,0,0.05); }
-        .score-val { font-size: 28px; font-weight: bold; color: #3498db; }
-        .tier-tag { padding: 12px 25px; border-radius: 4px; color: #fff; font-weight: bold; font-size: 1.1em; }
-        .t1 { background: #27ae60; }
-        .t2 { background: #f39c12; }
-        .t3 { background: #e74c3c; }
+        /* Стили результата по скриншоту */
+        #result-area { 
+            display: none; padding: 25px; background: white; border: 1px solid #eee; 
+            border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+        }
+        .result-intro { margin-bottom: 15px; font-size: 14px; }
+        .tier-header { font-size: 16px; font-weight: bold; display: flex; align-items: center; margin-bottom: 5px; }
+        .dot { height: 14px; width: 14px; border-radius: 50%; display: inline-block; margin-right: 10px; }
+        .tier-sub { font-style: italic; color: #555; margin-bottom: 15px; display: block; font-size: 14px; }
+        
+        .details-list { list-style: none; padding: 0; margin: 0; }
+        .details-list li { margin-bottom: 6px; padding-left: 20px; position: relative; font-size: 14px; }
+        .details-list li::before { content: "•"; position: absolute; left: 5px; font-weight: bold; }
+        .details-list b { font-weight: bold; }
+
+        .total-score-badge { float: right; font-weight: bold; font-size: 16px; background: #eee; padding: 5px 12px; border-radius: 15px; }
+
+        /* Цвета точек */
+        .green { background-color: #2ecc71; }
+        .yellow { background-color: #f1c40f; }
+        .red { background-color: #e74c3c; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Матрица оценки операционных запусков</h1>
+    <h1>Оценка продуктового запуска</h1>
 
-    <table class="matrix-table" id="matrix">
-        <thead>
-            <tr>
-                <th>Критерий</th>
-                <th>0 баллов</th>
-                <th>1 балл</th>
-                <th>2 балла</th>
-            </tr>
-        </thead>
-        <tbody id="matrix-body">
-            <!-- JS will render rows here -->
-        </tbody>
-    </table>
+    <form id="calcForm">
+        <table>
+            <thead>
+                <tr>
+                    <th>Критерий</th>
+                    <th>0 баллов</th>
+                    <th>1 балл</th>
+                    <th>2 балла</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 1 -->
+                <tr>
+                    <td class="criterion-name">1. Reach (Охват)</td>
+                    <td><label class="opt-box"><input type="radio" name="c1" value="0" required><span><span class="opt-title">Узкая ниша</span><span class="opt-desc">Клиенты с ограниченной потребностью / Данные отсутствуют</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c1" value="1"><span><span class="opt-title">Крупный сегмент</span><span class="opt-desc">Пользователи услуги / Определенный регион</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c1" value="2"><span><span class="opt-title">Большая часть базы</span></span></label></td>
+                </tr>
+                <!-- 2 -->
+                <tr>
+                    <td class="criterion-name">2. Impact (Влияние)</td>
+                    <td><label class="opt-box"><input type="radio" name="c2" value="0" required><span><span class="opt-title">Косвенное влияние</span><span class="opt-desc">Низкий эффект / Не поддается измерению</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c2" value="1"><span><span class="opt-title">Заметное влияние</span><span class="opt-desc">Улучшение usability / Процесс проще / Измеримо</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c2" value="2"><span><span class="opt-title">Ощутимый инкремент</span><span class="opt-desc">Влияние на выручку, АБПП, отток</span></span></label></td>
+                </tr>
+                <!-- 3 -->
+                <tr>
+                    <td class="criterion-name">3. Обоснование</td>
+                    <td><label class="opt-box"><input type="radio" name="c3" value="0" required><span><span class="opt-title">Отсутствуют</span><span class="opt-desc">Тестируется гипотеза / Нет результатов исследований</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c3" value="1"><span><span class="opt-title">Значимые обоснования</span><span class="opt-desc">Посчитан бизнес-кейс / Аналитика данных</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c3" value="2"><span><span class="opt-title">Высокая важность</span><span class="opt-desc">Требование регулятора / Стратегический приоритет</span></span></label></td>
+                </tr>
+                <!-- 4 -->
+                <tr>
+                    <td class="criterion-name">4. CX-сложность</td>
+                    <td><label class="opt-box"><input type="radio" name="c4" value="0" required><span><span class="opt-title">Линейный путь</span><span class="opt-desc">1-2 шага / Минорные правки</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c4" value="1"><span><span class="opt-title">Разветвленные пути</span><span class="opt-desc">Новые шаги / Развилки и вариативность</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c4" value="2"><span><span class="opt-title">Комплексные пути</span><span class="opt-desc">Новые сценарии / Кардинальная смена логики</span></span></label></td>
+                </tr>
+                <!-- 5 -->
+                <tr>
+                    <td class="criterion-name">5. Токсичность</td>
+                    <td><label class="opt-box"><input type="radio" name="c5" value="0" required><span><span class="opt-title">Не выявлена</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c5" value="1"><span><span class="opt-title">Умеренная</span><span class="opt-desc">Навязчивые баннеры / "Пуши" / Продвижение условий</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c5" value="2"><span><span class="opt-title">Высокая</span><span class="opt-desc">Dark-паттерны / Платные опции / Повышение цены</span></span></label></td>
+                </tr>
+                <!-- 6 -->
+                <tr>
+                    <td class="criterion-name">6. Реализация</td>
+                    <td><label class="opt-box"><input type="radio" name="c6" value="0" required><span><span class="opt-title">Стандартная</span><span class="opt-desc">Повтор существующих механик / По аналогии</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c6" value="1"><span><span class="opt-title">Новшества</span><span class="opt-desc">Адаптация решений с локальными правками</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c6" value="2"><span><span class="opt-title">Нестандартная</span><span class="opt-desc">Создание принципиально нового взаимодействия</span></span></label></td>
+                </tr>
+                <!-- 7 -->
+                <tr>
+                    <td class="criterion-name">7. Обращаемость</td>
+                    <td><label class="opt-box"><input type="radio" name="c7" value="0" required><span><span class="opt-title">Не прогнозируется</span><span class="opt-desc">Бесшовные изменения / Без коммуникаций</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c7" value="1"><span><span class="opt-title">Умеренное</span><span class="opt-desc">Небольшой охват / Есть исходящие коммуникации</span></span></label></td>
+                    <td><label class="opt-box"><input type="radio" name="c7" value="2"><span><span class="opt-title">Высокий риск</span><span class="opt-desc">Большой охват / Существенные изменения в CJ</span></span></label></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
 
-    <div id="sticky-result">
-        <div>
-            <div class="score-val">Баллы: <span id="total-pts">0</span></div>
-            <div id="verdict" style="margin-top:5px; font-weight: 500;">Выберите значения в таблице</div>
-        </div>
-        <div id="tier-label" class="tier-tag" style="display:none;"></div>
+    <div id="result-area">
+        <div class="total-score-badge">Сумма баллов: <span id="finalScore">0</span></div>
+        <div class="result-intro">На основе суммы баллов определяется формат работы и финальный артефакт:</div>
+        <div id="tierContainer"></div>
     </div>
-</div>
 
-<script>
-const data = [
-    {
-        title: "1. Reach (Охват)",
-        options: [
-            { title: "Узкая ниша / выделенный сегмент", list: ["Клиенты с ограниченной потребностью", "Данные об охвате отсутствуют"] },
-            { title: "Крупный сегмент", list: ["Пользователи определенной услуги", "Определенный регион"] },
-            { title: "Большая часть базы", list: ["Охватывает всех клиентов"] }
-        ]
-    },
-    {
-        title: "2. Impact (Влияние)",
-        options: [
-            { title: "Косвенное влияние", list: ["Низкий эффект", "Эффект не поддается измерению"] },
-            { title: "Заметное влияние", list: ["Явное улучшение usability", "Упрощение процесса", "Эффект можно измерить"] },
-            { title: "Ощутимый инкремент", list: ["Влияние на ключевые показатели (выручка, АБПП, снижение оттока) с посчитанным эффектом"] }
-        ]
-    },
-    {
-        title: "3. Validation (Обоснование)",
-        options: [
-            { title: "Явные обоснования отсутствуют", list: ["Тестируется бизнес-гипотеза", "Провалидированные результаты исследований и дополнительные аргументы отсутствуют"] },
-            { title: "Есть значимые обоснования", list: ["Посчитан бизнес-кейс", "Результаты исследований и опросов", "Аналитика данных, подтверждающая необходимость запуска"] },
-            { title: "Подтверждена высокая важность", list: ["Необходимость занять определенную позицию на рынке", "Есть требование регулятора", "Запуск приоритизирован со стороны топ-менеджмента", "Запуск относится к стратегическому бизнес-направлению"] }
-        ]
-    },
-    {
-        title: "4. CX-сложность и степень изменений",
-        options: [
-            { title: "Линейный путь", list: ["Затрагивается 1-2 шага в сценарии", "Небольшое количество действий клиента", "Минорные правки (меняются некоторые отдельные элементы)", "Изменений для клиента вообще нет"] },
-            { title: "Разветвленные пути", list: ["Добавляются новые шаги в сценарии", "Появляются развилки и вариативность действий"] },
-            { title: "Комплексные или новые пути", list: ["Формируются новые сценарии и процессы", "Кардинально меняется логика взаимодействия"] }
-        ]
-    },
-    {
-        title: "5. Токсичность",
-        options: [
-            { title: "Не выявлена", list: ["Чистый UX"] },
-            { title: "Умеренная", list: ["Вводятся навязчивые баннеры, уведомления, \"пуши\"", "Активное продвижение новых условий"] },
-            { title: "Высокая", list: ["Dark-паттерны и скрытые условия", "Монетизация ранее бесплатных опций", "Любое повышение стоимости", "Принудительное изменение условий и сценариев обслуживания"] }
-        ]
-    },
-    {
-        title: "6. Реализация",
-        options: [
-            { title: "Стандартное решение", list: ["Полностью повторяются существующие механики", "Можно реализовать по аналогии с похожими продуктами"] },
-            { title: "Требуются нововведения", list: ["Нужна адаптация существующих решений с локальными новшествами"] },
-            { title: "Нестандартное, уникальное решение", list: ["Создание принципиально нового взаимодействия"] }
-        ]
-    },
-    {
-        title: "7. Влияние на обращаемость",
-        options: [
-            { title: "Не прогнозируется", list: ["В CJ ничего не меняется или изменения бесшовные/минорные", "Исходящие коммуникации не задействованы"] },
-            { title: "Умеренное влияние", list: ["Небольшой охват", "Умеренные изменения в CJ", "Задействован как минимум один из видов исходящих коммуникаций:"], checks: ["Нотификации", "Информирование/рассылки", "Продвижение (реклама, CVM)"] },
-            { title: "Риск повышенной обращаемости", list: ["Большой охват", "Существенные изменения в CJ", "Задействовано несколько или все виды исходящих коммуникаций:"], checks: ["Нотификации", "Информирование/рассылки", "Продвижение (реклама, CVM)"] }
-        ]
-    }
-];
+    <script>
+        const form = document.getElementById('calcForm');
+        const resultArea = document.getElementById('result-area');
+        const tierContainer = document.getElementById('tierContainer');
+        const finalScoreSpan = document.getElementById('finalScore');
 
-let scores = new Array(data.length).fill(null);
+        const content = {
+            t0: {
+                dot: 'green',
+                title: 'Tier 0: Self-Service (0 – 6 балла) / Автопилот',
+                sub: 'Задачи с низким риском и стандартной логикой.',
+                list: [
+                    '<b>Решение:</b> Пропуск без участия CJ-эксперта.',
+                    '<b>Действие:</b> Продукт реализует задачу автономно/',
+                    '<b>Артефакт:</b> Дисклеймер в Jira о передаче ответственности за UX на сторону Продукта.'
+                ]
+            },
+            t1: {
+                dot: 'yellow',
+                title: 'Tier 1: Minimal Engagement (7 – 10 баллов) / Штурман',
+                sub: 'Задачи среднего влияния или с элементами новшества.',
+                list: [
+                    '<b>Решение:</b> Экспертная консультация',
+                    '<b>Действие:</b> Эксперт анализирует вводные и дает «чертеж» процесса текстом.',
+                    '<b>Артефакт:</b> Письменное CX-заключение (список из 3–5 критических требований к сценарию)'
+                ]
+            },
+            t2: {
+                dot: 'red',
+                title: 'Tier 2: Full Design (11 – 14 баллов) / Навигатор',
+                sub: 'Высокорисковые, уникальные или стратегические запуски.',
+                list: [
+                    '<b>Решение:</b> Полноценное сопровождение проектирования.',
+                    '<b>Действие:</b> Исследования, проектирование E2E-путей, прототипирование.',
+                    '<b>Артефакт:</b> User Flow (схема), визуал'
+                ]
+            }
+        };
 
-function render() {
-    const tbody = document.getElementById('matrix-body');
-    tbody.innerHTML = data.map((item, rowIdx) => `
-        <tr>
-            <td class="col-criterion">${item.title}</td>
-            ${item.options.map((opt, colIdx) => `
-                <td class="option-cell ${scores[rowIdx] === colIdx ? 'selected' : ''}" onclick="setScore(${rowIdx}, ${colIdx})">
-                    <span class="option-title">${opt.title}</span>
-                    <ul>${opt.list.map(li => `<li>${li}</li>`).join('')}</ul>
-                    ${opt.checks ? `<div class="sub-checks">${opt.checks.map(c => `<label><input type="checkbox" disabled> ${c}</label>`).join('')}</div>` : ''}
-                </td>
-            `).join('')}
-        </tr>
-    `).join('');
-    updateResult();
-}
+        form.addEventListener('change', () => {
+            const formData = new FormData(form);
+            let score = 0;
+            let count = 0;
 
-function setScore(row, val) {
-    scores[row] = val;
-    render();
-}
+            for (let value of formData.values()) {
+                score += parseInt(value);
+                count++;
+            }
 
-function updateResult() {
-    const total = scores.reduce((sum, val) => sum + (val || 0), 0);
-    const filled = scores.filter(v => v !== null).length;
-    
-    document.getElementById('total-pts').innerText = total;
-    const label = document.getElementById('tier-label');
-    const verdict = document.getElementById('verdict');
+            if (count === 7) {
+                finalScoreSpan.textContent = score;
+                let data;
+                if (score <= 6) data = content.t0;
+                else if (score <= 10) data = content.t1;
+                else data = content.t2;
 
-    if (filled < data.length) {
-        verdict.innerText = `Заполнено критериев: ${filled} из ${data.length}`;
-        label.style.display = 'none';
-        return;
-    }
-
-    label.style.display = 'block';
-    if (total <= 4) {
-        label.className = 'tier-tag t1';
-        label.innerText = 'TIER 1: SELF-SERVICE';
-        verdict.innerText = 'Пропускаем. Продукт идет по чек-листу самостоятельно.';
-    } else if (total <= 9) {
-        label.className = 'tier-tag t2';
-        label.innerText = 'TIER 2: LIGHT TOUCH';
-        verdict.innerText = 'Минимальное участие. Описываем требования текстом.';
-    } else {
-        label.className = 'tier-tag t3';
-        label.innerText = 'TIER 3: FULL CJ-DESIGN';
-        verdict.innerText = 'Берем в полноценную проработку (E2E, макеты, тесты).';
-    }
-}
-
-render();
-</script>
+                tierContainer.innerHTML = `
+                    <div class="tier-header"><span class="dot ${data.dot}"></span> ${data.title}</div>
+                    <span class="tier-sub">${data.sub}</span>
+                    <ul class="details-list">
+                        ${data.list.map(li => `<li>${li}</li>`).join('')}
+                    </ul>
+                `;
+                resultArea.style.display = 'block';
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+    </script>
 </body>
 </html>
