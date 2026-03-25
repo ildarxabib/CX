@@ -2,188 +2,208 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор скоринга продуктовых запусков</title>
+    <title>Скоринг продуктового запуска</title>
     <style>
-        body { font-family: sans-serif; line-height: 1.4; color: #333; max-width: 950px; margin: 20px auto; padding: 20px; background-color: #f9f9f9; }
-        h1 { text-align: center; font-size: 22px; color: #2c3e50; }
+        :root { --border: #dfe1e6; --bg-gray: #f4f5f7; --blue: #0052cc; --text: #172b4d; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fff; color: var(--text); padding: 20px; line-height: 1.4; }
+        .container { max-width: 1450px; margin: 0 auto; border: 1px solid var(--border); border-radius: 4px; padding: 25px; }
+        h1 { text-align: center; font-size: 1.4rem; margin-bottom: 10px; }
+        .progress-info { text-align: center; color: #6b778c; margin-bottom: 25px; font-size: 0.9rem; }
         
-        table { width: 100%; border-collapse: collapse; background: white; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        th, td { border: 1px solid #ddd; padding: 12px; vertical-align: top; }
-        th { background-color: #f2f2f2; font-weight: bold; text-align: center; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 20px; }
+        th { background: var(--bg-gray); padding: 12px; border: 1px solid var(--border); font-size: 0.85rem; color: #6b778c; }
+        td { border: 1px solid var(--border); padding: 12px; vertical-align: top; font-size: 0.85rem; cursor: pointer; }
         
-        .criterion-name { font-weight: bold; width: 20%; background-color: #fafafa; }
-        label { display: block; cursor: pointer; height: 100%; }
-        .opt-box { display: flex; align-items: flex-start; gap: 8px; }
-        input[type="radio"] { margin-top: 3px; cursor: pointer; }
-        
-        .opt-title { font-weight: bold; font-size: 14px; display: block; }
-        .opt-desc { font-size: 12px; color: #666; display: block; margin-top: 2px; }
+        .col-crit { width: 180px; font-weight: 700; background: var(--bg-gray); cursor: default; }
+        .col-comment { width: 220px; cursor: default; }
 
-        /* Стили результата по скриншоту */
-        #result-area { 
-            display: none; padding: 25px; background: white; border: 1px solid #eee; 
-            border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-        }
-        .result-intro { margin-bottom: 15px; font-size: 14px; }
-        .tier-header { font-size: 16px; font-weight: bold; display: flex; align-items: center; margin-bottom: 5px; }
-        .dot { height: 14px; width: 14px; border-radius: 50%; display: inline-block; margin-right: 10px; }
-        .tier-sub { font-style: italic; color: #555; margin-bottom: 15px; display: block; font-size: 14px; }
+        .cell-content { display: flex; align-items: flex-start; gap: 10px; pointer-events: none; }
+        input[type="radio"] { margin-top: 3px; cursor: pointer; pointer-events: auto; transform: scale(1.1); }
         
-        .details-list { list-style: none; padding: 0; margin: 0; }
-        .details-list li { margin-bottom: 6px; padding-left: 20px; position: relative; font-size: 14px; }
-        .details-list li::before { content: "•"; position: absolute; left: 5px; font-weight: bold; }
-        .details-list b { font-weight: bold; }
+        .opt-title { font-weight: 700; display: block; margin-bottom: 5px; font-size: 0.9rem; }
+        .opt-list { margin: 0; padding-left: 18px; color: #505f79; font-size: 0.8rem; list-style-type: disc; }
+        .opt-list li { margin-bottom: 3px; }
 
-        .total-score-badge { float: right; font-weight: bold; font-size: 16px; background: #eee; padding: 5px 12px; border-radius: 15px; }
+        .comment-area { width: 100%; height: 110px; border: 1px solid var(--border); border-radius: 3px; padding: 8px; font-family: inherit; font-size: 0.85rem; resize: none; box-sizing: border-box; }
+        .comment-area:focus { outline: 1px solid var(--blue); border-color: var(--blue); }
 
-        /* Цвета точек */
-        .green { background-color: #2ecc71; }
-        .yellow { background-color: #f1c40f; }
-        .red { background-color: #e74c3c; }
+        .footer { display: flex; justify-content: space-between; align-items: flex-start; border-top: 2px solid var(--border); padding-top: 25px; margin-top: 10px; }
+        .tier-box { flex: 1; visibility: hidden; } /* Скрыто, пока не заполнят всё */
+        .tier-label { font-size: 1.2rem; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .tier-details { font-size: 0.95rem; line-height: 1.5; margin-bottom: 15px; }
+        
+        .score-total { background: var(--bg-gray); padding: 15px 30px; border-radius: 4px; border: 1px solid var(--border); text-align: center; min-width: 150px; }
+        .score-val { font-size: 2.5rem; font-weight: bold; display: block; color: var(--blue); }
+
+        .copy-btn { background: var(--blue); color: white; border: none; padding: 12px 24px; border-radius: 3px; cursor: pointer; font-weight: 600; font-size: 0.95rem; }
+        .copy-btn:hover { background: #0747a6; }
     </style>
 </head>
 <body>
 
+<div class="container">
     <h1>Оценка продуктового запуска</h1>
+    <div class="progress-info" id="progressInfo">Заполнено 0 из 7 критериев</div>
 
-    <form id="calcForm">
-        <table>
-            <thead>
-                <tr>
-                    <th>Критерий</th>
-                    <th>0 баллов</th>
-                    <th>1 балл</th>
-                    <th>2 балла</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- 1 -->
-                <tr>
-                    <td class="criterion-name">1. Reach (Охват)</td>
-                    <td><label class="opt-box"><input type="radio" name="c1" value="0" required><span><span class="opt-title">Узкая ниша</span><span class="opt-desc">Клиенты с ограниченной потребностью / Данные отсутствуют</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c1" value="1"><span><span class="opt-title">Крупный сегмент</span><span class="opt-desc">Пользователи услуги / Определенный регион</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c1" value="2"><span><span class="opt-title">Большая часть базы</span></span></label></td>
-                </tr>
-                <!-- 2 -->
-                <tr>
-                    <td class="criterion-name">2. Impact (Влияние)</td>
-                    <td><label class="opt-box"><input type="radio" name="c2" value="0" required><span><span class="opt-title">Косвенное влияние</span><span class="opt-desc">Низкий эффект / Не поддается измерению</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c2" value="1"><span><span class="opt-title">Заметное влияние</span><span class="opt-desc">Улучшение usability / Процесс проще / Измеримо</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c2" value="2"><span><span class="opt-title">Ощутимый инкремент</span><span class="opt-desc">Влияние на выручку, АБПП, отток</span></span></label></td>
-                </tr>
-                <!-- 3 -->
-                <tr>
-                    <td class="criterion-name">3. Обоснование</td>
-                    <td><label class="opt-box"><input type="radio" name="c3" value="0" required><span><span class="opt-title">Отсутствуют</span><span class="opt-desc">Тестируется гипотеза / Нет результатов исследований</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c3" value="1"><span><span class="opt-title">Значимые обоснования</span><span class="opt-desc">Посчитан бизнес-кейс / Аналитика данных</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c3" value="2"><span><span class="opt-title">Высокая важность</span><span class="opt-desc">Требование регулятора / Стратегический приоритет</span></span></label></td>
-                </tr>
-                <!-- 4 -->
-                <tr>
-                    <td class="criterion-name">4. CX-сложность</td>
-                    <td><label class="opt-box"><input type="radio" name="c4" value="0" required><span><span class="opt-title">Линейный путь</span><span class="opt-desc">1-2 шага / Минорные правки</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c4" value="1"><span><span class="opt-title">Разветвленные пути</span><span class="opt-desc">Новые шаги / Развилки и вариативность</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c4" value="2"><span><span class="opt-title">Комплексные пути</span><span class="opt-desc">Новые сценарии / Кардинальная смена логики</span></span></label></td>
-                </tr>
-                <!-- 5 -->
-                <tr>
-                    <td class="criterion-name">5. Токсичность</td>
-                    <td><label class="opt-box"><input type="radio" name="c5" value="0" required><span><span class="opt-title">Не выявлена</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c5" value="1"><span><span class="opt-title">Умеренная</span><span class="opt-desc">Навязчивые баннеры / "Пуши" / Продвижение условий</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c5" value="2"><span><span class="opt-title">Высокая</span><span class="opt-desc">Dark-паттерны / Платные опции / Повышение цены</span></span></label></td>
-                </tr>
-                <!-- 6 -->
-                <tr>
-                    <td class="criterion-name">6. Реализация</td>
-                    <td><label class="opt-box"><input type="radio" name="c6" value="0" required><span><span class="opt-title">Стандартная</span><span class="opt-desc">Повтор существующих механик / По аналогии</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c6" value="1"><span><span class="opt-title">Новшества</span><span class="opt-desc">Адаптация решений с локальными правками</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c6" value="2"><span><span class="opt-title">Нестандартная</span><span class="opt-desc">Создание принципиально нового взаимодействия</span></span></label></td>
-                </tr>
-                <!-- 7 -->
-                <tr>
-                    <td class="criterion-name">7. Обращаемость</td>
-                    <td><label class="opt-box"><input type="radio" name="c7" value="0" required><span><span class="opt-title">Не прогнозируется</span><span class="opt-desc">Бесшовные изменения / Без коммуникаций</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c7" value="1"><span><span class="opt-title">Умеренное</span><span class="opt-desc">Небольшой охват / Есть исходящие коммуникации</span></span></label></td>
-                    <td><label class="opt-box"><input type="radio" name="c7" value="2"><span><span class="opt-title">Высокий риск</span><span class="opt-desc">Большой охват / Существенные изменения в CJ</span></span></label></td>
-                </tr>
-            </tbody>
-        </table>
-    </form>
+    <table id="calcTable">
+        <thead>
+            <tr>
+                <th class="col-crit">Критерий</th>
+                <th>0 баллов</th>
+                <th>1 балл</th>
+                <th>2 балла</th>
+                <th class="col-comment">Комментарий</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 1. Reach -->
+            <tr>
+                <td class="col-crit">1. Reach (Охват)</td>
+                <td class="score-cell" data-score="0"><div class="cell-content"><input type="radio" name="r1"><div><span class="opt-title">Узкая ниша / выделенный сегмент</span><ul class="opt-list"><li>Клиенты с ограниченной потребностью</li><li>Данные об охвате отсутствуют</li></ul></div></div></td>
+                <td class="score-cell" data-score="1"><div class="cell-content"><input type="radio" name="r1"><div><span class="opt-title">Крупный сегмент</span><ul class="opt-list"><li>Пользователи определенной услуги</li><li>Определенный регион</li></ul></div></div></td>
+                <td class="score-cell" data-score="2"><div class="cell-content"><input type="radio" name="r1"><div><span class="opt-title">Большая часть базы</span></div></div></td>
+                <td class="col-comment"><textarea class="comment-area" placeholder="Подробности..."></textarea></td>
+            </tr>
+            <!-- 2. Impact -->
+            <tr>
+                <td class="col-crit">2. Impact (Влияние)</td>
+                <td class="score-cell" data-score="0"><div class="cell-content"><input type="radio" name="r2"><div><span class="opt-title">Косвенное влияние</span><ul class="opt-list"><li>Низкий эффект</li><li>Эффект не поддается измерению</li></ul></div></div></td>
+                <td class="score-cell" data-score="1"><div class="cell-content"><input type="radio" name="r2"><div><span class="opt-title">Заметное влияние</span><ul class="opt-list"><li>Явное улучшение usability</li><li>Упрощение процесса</li><li>Эффект можно измерить</li></ul></div></div></td>
+                <td class="score-cell" data-score="2"><div class="cell-content"><input type="radio" name="r2"><div><span class="opt-title">Ощутимый инкремент</span><ul class="opt-list"><li>Влияние на ключевые показатели (выручка, АБПП, снижение оттока) с посчитанным эффектом</li></ul></div></div></td>
+                <td class="col-comment"><textarea class="comment-area" placeholder="Подробности..."></textarea></td>
+            </tr>
+            <!-- 3. Validation -->
+            <tr>
+                <td class="col-crit">3. Validation (Обоснование)</td>
+                <td class="score-cell" data-score="0"><div class="cell-content"><input type="radio" name="r3"><div><span class="opt-title">Явные обоснования отсутствуют</span><ul class="opt-list"><li>Тестируется бизнес-гипотеза</li><li>Результаты исследований и доп. аргументы отсутствуют</li></ul></div></div></td>
+                <td class="score-cell" data-score="1"><div class="cell-content"><input type="radio" name="r3"><div><span class="opt-title">Есть значимые обоснования</span><ul class="opt-list"><li>Посчитан бизнес-кейс</li><li>Результаты исследований и опросов</li><li>Аналитика данных, подтверждающая необходимость запуска</li></ul></div></div></td>
+                <td class="score-cell" data-score="2"><div class="cell-content"><input type="radio" name="r3"><div><span class="opt-title">Подтверждена высокая важность</span><ul class="opt-list"><li>Необходимость занять позицию на рынке</li><li>Требование регулятора</li><li>Запуск приоритезирован со стороны топ-менеджмента</li></ul></div></div></td>
+                <td class="col-comment"><textarea class="comment-area" placeholder="Подробности..."></textarea></td>
+            </tr>
+            <!-- 4. CX -->
+            <tr>
+                <td class="col-crit">4. СХ-сложность и степень изменений</td>
+                <td class="score-cell" data-score="0"><div class="cell-content"><input type="radio" name="r4"><div><span class="opt-title">Линейный путь</span><ul class="opt-list"><li>Затрагивается 1-2 шага в сценарии</li><li>Минорные правки</li><li>Изменений для клиента вообще нет</li></ul></div></div></td>
+                <td class="score-cell" data-score="1"><div class="cell-content"><input type="radio" name="r4"><div><span class="opt-title">Разветвленные пути</span><ul class="opt-list"><li>Добавляются новые шаги в сценарии</li><li>Появляются развилки и вариативность действий</li></ul></div></div></td>
+                <td class="score-cell" data-score="2"><div class="cell-content"><input type="radio" name="r4"><div><span class="opt-title">Комплексные или новые пути</span><ul class="opt-list"><li>Формируются новые сценарии и процессы</li><li>Кардинально меняется логика взаимодействия</li></ul></div></div></td>
+                <td class="col-comment"><textarea class="comment-area" placeholder="Подробности..."></textarea></td>
+            </tr>
+            <!-- 5. Toxicity -->
+            <tr>
+                <td class="col-crit">5. Токсичность</td>
+                <td class="score-cell" data-score="0"><div class="cell-content"><input type="radio" name="r5"><div><span class="opt-title">Не выявлена</span></div></div></td>
+                <td class="score-cell" data-score="1"><div class="cell-content"><input type="radio" name="r5"><div><span class="opt-title">Умеренная</span><ul class="opt-list"><li>Навязчивые баннеры, уведомления, "пуши"</li><li>Активное продвижение новых условий</li></ul></div></div></td>
+                <td class="score-cell" data-score="2"><div class="cell-content"><input type="radio" name="r5"><div><span class="opt-title">Высокая</span><ul class="opt-list"><li>Dark-паттерны и скрытые условия</li><li>Монетизация ранее бесплатных опций</li><li>Любое повышение стоимости</li></ul></div></div></td>
+                <td class="col-comment"><textarea class="comment-area" placeholder="Подробности..."></textarea></td>
+            </tr>
+            <!-- 6. Realization -->
+            <tr>
+                <td class="col-crit">6. Реализация</td>
+                <td class="score-cell" data-score="0"><div class="cell-content"><input type="radio" name="r6"><div><span class="opt-title">Стандартное решение</span><ul class="opt-list"><li>Полностью повторяются существующие механики</li><li>Можно реализовать по аналогии</li></ul></div></div></td>
+                <td class="score-cell" data-score="1"><div class="cell-content"><input type="radio" name="r6"><div><span class="opt-title">Требуются нововведения</span><ul class="opt-list"><li>Нужна адаптация существующих решений</li></ul></div></div></td>
+                <td class="score-cell" data-score="2"><div class="cell-content"><input type="radio" name="r6"><div><span class="opt-title">Нестандартное, уникальное решение</span><ul class="opt-list"><li>Создание принципиально нового взаимодействия</li></ul></div></div></td>
+                <td class="col-comment"><textarea class="comment-area" placeholder="Подробности..."></textarea></td>
+            </tr>
+            <!-- 7. Appeals -->
+            <tr>
+                <td class="col-crit">7. Влияние на обращаемость</td>
+                <td class="score-cell" data-score="0"><div class="cell-content"><input type="radio" name="r7"><div><span class="opt-title">Не прогнозируется</span><ul class="opt-list"><li>В CJ ничего не меняется или изменения бесшовные</li><li>Исходящие коммуникации не задействованы</li></ul></div></div></td>
+                <td class="score-cell" data-score="1"><div class="cell-content"><input type="radio" name="r7"><div><span class="opt-title">Умеренное влияние</span><ul class="opt-list"><li>Небольшой охват / Умеренные изменения в CJ</li><li>Задействован как минимум один вид коммуникаций</li></ul></div></div></td>
+                <td class="score-cell" data-score="2"><div class="cell-content"><input type="radio" name="r7"><div><span class="opt-title">Риск повышенной обращаемости</span><ul class="opt-list"><li>Большой охват / Существенные изменения в CJ</li><li>Задействовано несколько каналов связи</li></ul></div></div></td>
+                <td class="col-comment"><textarea class="comment-area" placeholder="Подробности..."></textarea></td>
+            </tr>
+        </tbody>
+    </table>
 
-    <div id="result-area">
-        <div class="total-score-badge">Сумма баллов: <span id="finalScore">0</span></div>
-        <div class="result-intro">На основе суммы баллов определяется формат работы и финальный артефакт:</div>
-        <div id="tierContainer"></div>
+    <div class="footer">
+        <div id="tierBlock" class="tier-box">
+            <div class="tier-label"><div id="tierDot" class="dot"></div> <span id="tierTitle"></span></div>
+            <div class="tier-details">
+                <div><b>Решение:</b> <span id="resSol"></span></div>
+                <div><b>Действие:</b> <span id="resAct"></span></div>
+                <div><b>Артефакт:</b> <span id="resArt"></span></div>
+            </div>
+            <button class="copy-btn" id="copyBtn">Скопировать в Jira</button>
+        </div>
+        <div class="score-total">
+            <span style="font-size: 0.75rem; color: #6b778c; text-transform: uppercase;">Итого баллов</span>
+            <span id="totalScore" class="score-val">0</span>
+        </div>
     </div>
+</div>
 
-    <script>
-        const form = document.getElementById('calcForm');
-        const resultArea = document.getElementById('result-area');
-        const tierContainer = document.getElementById('tierContainer');
-        const finalScoreSpan = document.getElementById('finalScore');
+<script>
+    const tiers = {
+        t0: { max: 6, label: "Tier 0: Self-Service / Автопилот", color: "#2ecc71", sol: "Пропуск без участия эксперта", act: "Автономная реализация", art: "Дисклеймер в Jira об ответственности за UX" },
+        t1: { max: 10, label: "Tier 1: Minimal Engagement / Штурман", color: "#f1c40f", sol: "Экспертная консультация", act: "Анализ вводных и текстовый «чертеж» процесса", art: "Письменное CX-заключение (3-5 требований)" },
+        t2: { max: 14, label: "Tier 2: Full Design / Навигатор", color: "#e74c3c", sol: "Полноценное сопровождение проектирования", act: "Исследования и проектирование E2E-путей", art: "User Flow (схема) и прототип" }
+    };
 
-        const content = {
-            t0: {
-                dot: 'green',
-                title: 'Tier 0: Self-Service (0 – 6 балла) / Автопилот',
-                sub: 'Задачи с низким риском и стандартной логикой.',
-                list: [
-                    '<b>Решение:</b> Пропуск без участия CJ-эксперта.',
-                    '<b>Действие:</b> Продукт реализует задачу автономно/',
-                    '<b>Артефакт:</b> Дисклеймер в Jira о передаче ответственности за UX на сторону Продукта.'
-                ]
-            },
-            t1: {
-                dot: 'yellow',
-                title: 'Tier 1: Minimal Engagement (7 – 10 баллов) / Штурман',
-                sub: 'Задачи среднего влияния или с элементами новшества.',
-                list: [
-                    '<b>Решение:</b> Экспертная консультация',
-                    '<b>Действие:</b> Эксперт анализирует вводные и дает «чертеж» процесса текстом.',
-                    '<b>Артефакт:</b> Письменное CX-заключение (список из 3–5 критических требований к сценарию)'
-                ]
-            },
-            t2: {
-                dot: 'red',
-                title: 'Tier 2: Full Design (11 – 14 баллов) / Навигатор',
-                sub: 'Высокорисковые, уникальные или стратегические запуски.',
-                list: [
-                    '<b>Решение:</b> Полноценное сопровождение проектирования.',
-                    '<b>Действие:</b> Исследования, проектирование E2E-путей, прототипирование.',
-                    '<b>Артефакт:</b> User Flow (схема), визуал'
-                ]
-            }
-        };
-
-        form.addEventListener('change', () => {
-            const formData = new FormData(form);
-            let score = 0;
-            let count = 0;
-
-            for (let value of formData.values()) {
-                score += parseInt(value);
-                count++;
-            }
-
-            if (count === 7) {
-                finalScoreSpan.textContent = score;
-                let data;
-                if (score <= 6) data = content.t0;
-                else if (score <= 10) data = content.t1;
-                else data = content.t2;
-
-                tierContainer.innerHTML = `
-                    <div class="tier-header"><span class="dot ${data.dot}"></span> ${data.title}</div>
-                    <span class="tier-sub">${data.sub}</span>
-                    <ul class="details-list">
-                        ${data.list.map(li => `<li>${li}</li>`).join('')}
-                    </ul>
-                `;
-                resultArea.style.display = 'block';
-                resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // Исправленный обработчик клика
+    document.querySelectorAll('.score-cell').forEach(cell => {
+        cell.addEventListener('click', function() {
+            const rb = this.querySelector('input[type="radio"]');
+            if (rb) {
+                rb.checked = true;
+                updateResult();
             }
         });
-    </script>
+    });
+
+    function updateResult() {
+        const selected = document.querySelectorAll('input[type="radio"]:checked');
+        let score = 0;
+        
+        selected.forEach(rb => {
+            const val = rb.closest('td').getAttribute('data-score');
+            score += parseInt(val);
+        });
+
+        document.getElementById('totalScore').innerText = score;
+        document.getElementById('progressInfo').innerText = `Заполнено ${selected.length} из 7 критериев`;
+
+        if (selected.length === 7) {
+            const tier = score <= 6 ? tiers.t0 : (score <= 10 ? tiers.t1 : tiers.t2);
+            const block = document.getElementById('tierBlock');
+            block.style.visibility = 'visible';
+            document.getElementById('tierDot').style.backgroundColor = tier.color;
+            document.getElementById('tierTitle').innerText = tier.label;
+            document.getElementById('resSol').innerText = tier.sol;
+            document.getElementById('resAct').innerText = tier.act;
+            document.getElementById('resArt').innerText = tier.art;
+        } else {
+            document.getElementById('tierBlock').style.visibility = 'hidden';
+        }
+    }
+
+    document.getElementById('copyBtn').onclick = function() {
+        const score = document.getElementById('totalScore').innerText;
+        const tier = document.getElementById('tierTitle').innerText;
+        
+        let jira = `h3. Результат скоринга продуктового запуска\n|| Критерий || Значение || Балл || Комментарий ||\n`;
+        document.querySelectorAll('#calcTable tbody tr').forEach(row => {
+            const crit = row.cells[0].innerText;
+            const rb = row.querySelector('input:checked');
+            const state = rb ? rb.closest('td').querySelector('.opt-title').innerText : "—";
+            const val = rb ? rb.closest('td').getAttribute('data-score') : "—";
+            const comm = row.querySelector('textarea').value.replace(/\n/g, " ");
+            jira += `| ${crit} | ${state} | ${val} | ${comm || " "} |\n`;
+        });
+        
+        jira += `\n*ИТОГО:* ${score} баллов\n*ФОРМАТ:* ${tier}\n`;
+        jira += `* Решение: ${document.getElementById('resSol').innerText}\n* Действие: ${document.getElementById('resAct').innerText}\n* Артефакт: ${document.getElementById('resArt').innerText}`;
+
+        const el = document.createElement('textarea');
+        el.value = jira; document.body.appendChild(el);
+        el.select(); document.execCommand('copy');
+        document.body.removeChild(el);
+        
+        this.innerText = "✅ Скопировано!";
+        setTimeout(() => this.innerText = "Скопировать в Jira", 2000);
+    };
+</script>
+
 </body>
+</html>
 </html>
