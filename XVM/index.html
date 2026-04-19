@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <title>Experience Value Model (EVM)</title>
     <style>
-        @font-face {
-            font-family: 'GT Walsheim Pro';
-            src: local('GT Walsheim Pro'), local('GTWalsheimPro-Regular');
-        }
-
         :root {
             --accent-green: #00B944;
             --accent-purple: #731982;
@@ -18,40 +13,44 @@
             --border-color: #E2E8F0;
             --text-main: #1A202C;
             --text-quiet: #718096;
+            /* Установка шрифтов MegaFon Graphik LC */
+            --font-reg: 'MegaFon Graphik LC Regular', 'Graphik LC', 'Graphik', sans-serif;
+            --font-med: 'MegaFon Graphik LC Medium', 'Graphik LC Medium', 'Graphik', sans-serif;
         }
 
         body { 
-            font-family: 'GT Walsheim Pro', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            line-height: 1.4; 
+            font-family: var(--font-reg);
+            line-height: 1.5; 
             color: var(--text-main); 
             max-width: 1550px; 
             margin: 0 auto; 
-            padding: 15px; 
+            padding: 20px 30px; 
             background: var(--bg-color); 
             -webkit-font-smoothing: antialiased;
         }
 
         .card { 
             background: var(--card-bg); 
-            padding: 15px 25px; 
+            padding: 24px 32px; 
             border-radius: 16px; 
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
-            margin-bottom: 12px; 
+            margin-bottom: 20px; 
             border: 1px solid var(--border-color);
         }
 
-        h1 { font-size: 24px; color: var(--accent-purple); text-transform: uppercase; margin: 0 0 15px 0; letter-spacing: 1px; font-weight: 800; text-align: center; }
-        h2 { font-size: 16px; margin: 0 0 15px 0; color: var(--text-main); border-left: 4px solid var(--accent-purple); padding-left: 12px; font-weight: 700; }
+        h1 { font-family: var(--font-med); font-size: 26px; color: var(--accent-purple); text-transform: uppercase; margin: 10px 0 20px 0; letter-spacing: 1.5px; text-align: center; }
+        h2 { font-family: var(--font-med); font-size: 18px; margin: 0 0 20px 0; color: var(--text-main); border-left: 5px solid var(--accent-purple); padding-left: 15px; }
 
-        .grid { display: flex; flex-wrap: wrap; gap: 15px; }
-        .field-group { flex: 1; min-width: 180px; display: flex; flex-direction: column; }
+        .grid { display: flex; flex-wrap: wrap; gap: 20px; }
+        .field-group { flex: 1; min-width: 200px; display: flex; flex-direction: column; }
         
-        label { font-weight: 700; margin-bottom: 6px; font-size: 10px; color: var(--text-quiet); text-transform: uppercase; letter-spacing: 0.5px; }
+        label { font-family: var(--font-med); font-weight: normal; margin-bottom: 8px; font-size: 10px; color: var(--text-quiet); text-transform: uppercase; letter-spacing: 1px; }
         
         input, select { 
-            padding: 8px 12px; 
+            font-family: var(--font-reg);
+            padding: 12px 16px; 
             border: 1px solid var(--border-color); 
-            border-radius: 8px; 
+            border-radius: 10px; 
             font-size: 14px; 
             background: var(--field-light);
             color: var(--text-main);
@@ -63,38 +62,39 @@
             border-color: var(--accent-purple); 
             background: #fff;
             outline: none; 
-            box-shadow: 0 0 0 3px rgba(115, 25, 130, 0.08); 
+            box-shadow: 0 0 0 4px rgba(115, 25, 130, 0.08); 
         }
 
-        .res-value { font-size: 20px; font-weight: 800; color: var(--accent-purple); white-space: nowrap; }
-        .res-cr { font-size: 20px; font-weight: 800; color: var(--accent-green); white-space: nowrap; }
+        .res-value { font-family: var(--font-med); font-size: 22px; color: var(--accent-purple); white-space: nowrap; }
+        .res-cr { font-family: var(--font-med); font-size: 22px; color: var(--accent-green); white-space: nowrap; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
-        th { padding: 8px 10px; font-size: 10px; text-transform: uppercase; color: var(--text-quiet); font-weight: 700; text-align: center; border-bottom: 2px solid var(--border-color); }
-        td { padding: 6px 10px; text-align: center; border-bottom: 1px solid var(--border-color); font-size: 13px; white-space: nowrap; background: #fff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { font-family: var(--font-med); padding: 12px 10px; font-size: 10px; text-transform: uppercase; color: var(--text-quiet); text-align: center; border-bottom: 2px solid var(--border-color); }
+        td { padding: 10px; text-align: center; border-bottom: 1px solid var(--border-color); font-size: 13px; white-space: nowrap; background: #fff; }
 
-        .highlight-money { font-weight: 800; color: var(--accent-purple); }
-        .highlight-green { font-weight: 800; color: var(--accent-green); }
+        .highlight-money { font-family: var(--font-med); color: var(--accent-purple); }
+        .highlight-green { font-family: var(--font-med); color: var(--accent-green); }
 
         .btn { 
+            font-family: var(--font-med);
             background: var(--accent-green); 
             color: white; 
             border: none; 
-            padding: 10px 20px; 
-            border-radius: 10px; 
+            padding: 14px 28px; 
+            border-radius: 12px; 
             cursor: pointer; 
-            font-weight: 700; 
-            font-size: 12px;
+            font-size: 13px;
             text-transform: uppercase;
-            transition: all 0.2s ease;
-            margin-top: 10px;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            box-shadow: 0 4px 10px rgba(0, 185, 68, 0.2);
         }
-        .btn:hover { background: #009e3a; transform: translateY(-1px); }
+        .btn:hover { background: #009e3a; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 185, 68, 0.3); }
 
-        .btn-del { background: #fff; border: 1px solid var(--border-color); color: #a0aec0; cursor: pointer; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; transition: all 0.2s; }
-        .btn-del:hover { background: #fff1f0; color: #f5222d; }
+        .btn-del { background: #fff; border: 1px solid var(--border-color); color: #a0aec0; cursor: pointer; width: 28px; height: 28px; border-radius: 50%; font-size: 12px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+        .btn-del:hover { background: #fff1f0; color: #f5222d; border-color: #ffa39e; }
 
-        .stage-selector-wrap { max-width: 400px; background: var(--field-light); padding: 15px 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border-color); }
+        .stage-selector-wrap { max-width: 450px; background: var(--field-light); padding: 20px 25px; border-radius: 14px; margin-bottom: 20px; border: 1px solid var(--border-color); }
         
         .no-wrap { white-space: nowrap; }
     </style>
@@ -121,7 +121,7 @@
                 <div id="global-cr" class="res-cr">0%</div>
             </div>
         </div>
-        <div class="grid" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-color);">
+        <div class="grid" style="margin-top: 25px; padding-top: 25px; border-top: 1px dashed var(--border-color);">
             <div class="field-group">
                 <label>AOV (Выручка, ₽)</label>
                 <input type="number" id="aov" placeholder="0" oninput="updateAll()">
@@ -147,7 +147,7 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 220px; text-align: left;">Название этапа</th>
+                    <th style="width: 250px; text-align: left;">Название этапа</th>
                     <th>Вход</th>
                     <th>Выход</th>
                     <th>Потери</th>
@@ -155,12 +155,12 @@
                     <th>Pot. Deals</th>
                     <th>Pot. AOV</th>
                     <th>Pot. LTV</th>
-                    <th style="width: 40px;"></th>
+                    <th style="width: 60px;"></th>
                 </tr>
             </thead>
             <tbody id="funnel-body"></tbody>
         </table>
-        <button class="btn" onclick="addStage()">+ Добавить этап</button>
+        <button class="btn" onclick="addStage()">+ Добавить этап воронки</button>
     </div>
 
     <!-- 3. PROBLEMS -->
@@ -175,14 +175,14 @@
             <thead>
                 <tr>
                     <th style="text-align: left;">Описание проблемы</th>
-                    <th style="width: 130px;">Reach (Охват)</th>
-                    <th style="width: 130px;">Impact (Сила)</th>
-                    <th style="width: 130px;">Confidence</th>
+                    <th style="width: 140px;">Reach (Охват)</th>
+                    <th style="width: 140px;">Impact (Сила)</th>
+                    <th style="width: 140px;">Confidence</th>
                     <th>Индекс (F)</th>
                     <th>Вес (%)</th>
                     <th>AOV Cost</th>
                     <th>LTV Cost</th>
-                    <th style="width: 40px;"></th>
+                    <th style="width: 60px;"></th>
                 </tr>
             </thead>
             <tbody id="problems-body"></tbody>
@@ -264,9 +264,9 @@
         funnelStages.forEach((stage, i) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="text" style="text-align:left; background:var(--field-light); padding: 4px 8px;" value="${stage.name}" oninput="funnelStages[${i}].name=this.value; updateSelectOptions()"></td>
+                <td><input type="text" style="text-align:left; background:var(--field-light);" value="${stage.name}" oninput="funnelStages[${i}].name=this.value; updateSelectOptions()"></td>
                 <td class="td-vol no-wrap">0</td>
-                <td><input type="number" value="${stage.s}" style="background:var(--field-light); padding: 4px 8px;" oninput="funnelStages[${i}].s=parseFloat(this.value); updateAll()"></td>
+                <td><input type="number" value="${stage.s}" style="background:var(--field-light);" oninput="funnelStages[${i}].s=parseFloat(this.value); updateAll()"></td>
                 <td class="td-lost no-wrap">0</td>
                 <td class="td-dcr highlight-green no-wrap">0%</td>
                 <td class="td-pd highlight-money no-wrap">0</td>
@@ -284,10 +284,10 @@
         problems.forEach((p, i) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="text" style="text-align:left; background:var(--field-light); padding: 4px 8px;" placeholder="Барьер..." value="${p.name}" oninput="problems[${i}].name=this.value"></td>
-                <td><select style="background:var(--field-light); padding: 4px 8px; font-size: 12px;" onchange="problems[${i}].reach=parseFloat(this.value); updateAll()">${options.reach.map(o => `<option value="${o.v}" ${o.v==p.reach?'selected':''}>${o.t}</option>`).join('')}</select></td>
-                <td><select style="background:var(--field-light); padding: 4px 8px; font-size: 12px;" onchange="problems[${i}].impact=parseFloat(this.value); updateAll()">${options.impact.map(o => `<option value="${o.v}" ${o.v==p.impact?'selected':''}>${o.t}</option>`).join('')}</select></td>
-                <td><select style="background:var(--field-light); padding: 4px 8px; font-size: 12px;" onchange="problems[${i}].conf=parseFloat(this.value); updateAll()">${options.conf.map(o => `<option value="${o.v}" ${o.v==p.conf?'selected':''}>${o.t}</option>`).join('')}</select></td>
+                <td><input type="text" style="text-align:left; background:var(--field-light);" placeholder="Опишите барьер..." value="${p.name}" oninput="problems[${i}].name=this.value"></td>
+                <td><select style="background:var(--field-light);" onchange="problems[${i}].reach=parseFloat(this.value); updateAll()">${options.reach.map(o => `<option value="${o.v}" ${o.v==p.reach?'selected':''}>${o.t}</option>`).join('')}</select></td>
+                <td><select style="background:var(--field-light);" onchange="problems[${i}].impact=parseFloat(this.value); updateAll()">${options.impact.map(o => `<option value="${o.v}" ${o.v==p.impact?'selected':''}>${o.t}</option>`).join('')}</select></td>
+                <td><select style="background:var(--field-light);" onchange="problems[${i}].conf=parseFloat(this.value); updateAll()">${options.conf.map(o => `<option value="${o.v}" ${o.v==p.conf?'selected':''}>${o.t}</option>`).join('')}</select></td>
                 <td class="td-f no-wrap">0</td><td class="td-w no-wrap">0%</td>
                 <td class="td-a-cost highlight-money no-wrap">0 ₽</td><td class="td-l-cost highlight-money no-wrap">0 ₽</td>
                 <td><button class="btn-del" onclick="removeProblem(${i})">✕</button></td>
