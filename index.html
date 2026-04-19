@@ -10,7 +10,7 @@
             --accent-purple: #731982;
             --bg-light: #F2F4F7;
             --border-gray: #D2D5DA;
-            --text-secondary: #8F96A4;
+            --text-main: #1D2024; /* Максимально контрастный черный */
             --gradient: linear-gradient(135deg, #00B956, #00D2FF);
             --font-family: 'MegaFon Graphik LC', 'MegaFon Graphik LC Regular', sans-serif;
         }
@@ -23,83 +23,83 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            color: #333;
+            color: var(--text-main);
         }
 
         .container {
             text-align: center;
             padding: 20px;
-            max-width: 500px;
+            max-width: 400px;
             width: 100%;
+        }
+
+        /* Эмодзи вместо логотипа */
+        .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            display: block;
         }
 
         h1 {
             font-weight: 600; /* Semibold */
-            color: var(--accent-purple);
-            margin-bottom: 30px;
+            color: var(--text-main);
+            margin-bottom: 32px;
+            font-size: 28px;
+            letter-spacing: -0.5px;
         }
 
         .links-container {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 16px;
         }
 
         .project-link {
             text-decoration: none;
             color: white;
             background-color: var(--primary-green);
-            padding: 16px 24px;
-            border-radius: 8px;
+            padding: 22px;
+            border-radius: 16px;
             font-weight: 500; /* Medium */
             font-size: 18px;
-            border: 1px solid var(--border-gray);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
             display: block;
+            box-shadow: 0 4px 10px rgba(0, 185, 86, 0.15);
         }
 
-        /* Эффект градиента при наведении */
         .project-link:hover {
             background: var(--gradient);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 185, 86, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 185, 86, 0.3);
+        }
+
+        .project-title {
+            display: block;
+            margin-bottom: 4px;
         }
 
         .description {
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.95); /* Почти белый для четкости */
             font-size: 14px;
-            margin-top: 5px;
             font-weight: 300; /* Light */
-        }
-
-        /* Декоративный элемент с фоном акцента */
-        .badge {
-            background-color: var(--bg-light);
-            color: var(--accent-purple);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            display: inline-block;
-            margin-bottom: 10px;
-            font-weight: 500;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="badge">Портфолио</div>
+    <span class="icon">📂</span>
     <h1>Мои проекты</h1>
     
     <div class="links-container">
         <a href="./scoring_matrix/" class="project-link">
-            Scoring Matrix
-            <div class="description">Инструмент для оценки матриц</div>
+            <span class="project-title">Scoring Matrix</span>
+            <div class="description">Инструмент для работы с матрицами</div>
         </a>
 
         <a href="./XVM/" class="project-link">
-            Experience Value Model
-            <div class="description">Модель ценности опыта (XVM)</div>
+            <span class="project-title">Experience Value Model</span>
+            <div class="description">Аналитическая модель ценности (XVM)</div>
         </a>
     </div>
 </div>
