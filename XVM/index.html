@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Experience Value Model (EVM)</title>
+    <style>
+        @font-face {
+            font-family: 'GT Walsheim Pro';
+            src: local('GT Walsheim Pro'), local('GTWalsheimPro-Regular');
+        }
+
+        :root {
+            --accent-green: #00B944;
+            --accent-purple: #731982;
+            --field-light: #F2F4F7;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #E2E8F0;
+            --text-main: #1A202C;
+            --text-quiet: #718096;
+        }
+
+        body { 
+            font-family: 'GT Walsheim Pro', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            line-height: 1.6; 
+            color: var(--text-main); 
+            max-width: 1550px; 
+            margin: 0 auto; 
+            padding: 40px 20px; 
+            background: var(--bg-color); 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .card { 
+            background: var(--card-bg); 
+            padding: 35px; 
+            border-radius: 20px; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+            margin-bottom: 30px; 
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 34px; color: var(--accent-purple); text-transform: uppercase; margin-bottom: 40px; letter-spacing: 1.5px; font-weight: 800; text-align: center; }
+        h2 { font-size: 20px; margin-bottom: 25px; color: var(--text-main); border-left: 6px solid var(--accent-purple); padding-left: 20px; font-weight: 700; }
+
+        .grid { display: flex; flex-wrap: wrap; gap: 30px; }
+        .field-group { flex: 1; min-width: 220px; display: flex; flex-direction: column; }
+        
+        label { font-weight: 700; margin-bottom: 12px; font-size: 11px; color: var(--text-quiet); text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Светлые поля #F2F4F7 с эффектом тени при фокусе */
+        input, select { 
+            padding: 14px 18px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            font-size: 15px; 
+            background: var(--field-light);
+            color: var(--text-main);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+        }
+
+        input:hover, select:hover { background: #ebedf0; border-color: #cbd5e0; }
+
+        input:focus, select:focus { 
+            border-color: var(--accent-purple); 
+            background: #fff;
+            outline: none; 
+            box-shadow: 0 0 0 4px rgba(115, 25, 130, 0.08), 0 4px 6px rgba(0,0,0,0.05); 
+            transform: translateY(-1px);
+        }
+
+        .res-value { font-size: 28px; font-weight: 800; color: var(--accent-purple); white-space: nowrap; text-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .res-cr { font-size: 28px; font-weight: 800; color: var(--accent-green); white-space: nowrap; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { padding: 18px 10px; font-size: 11px; text-transform: uppercase; color: var(--text-quiet); font-weight: 700; text-align: center; border-bottom: 2px solid var(--border-color); }
+        td { padding: 16px 10px; text-align: center; border-bottom: 1px solid var(--border-color); font-size: 14px; white-space: nowrap; background: #fff; }
+
+        .highlight-money { font-weight: 800; color: var(--accent-purple); }
+        .highlight-green { font-weight: 800; color: var(--accent-green); }
+
+        .btn { 
+            background: var(--accent-green); 
+            color: white; 
+            border: none; 
+            padding: 16px 32px; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-size: 14px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(0, 185, 68, 0.3);
+        }
+        .btn:hover { background: #009e3a; transform: translateY(-3px); box-shadow: 0 7px 20px rgba(0, 185, 68, 0.4); }
+        .btn:active { transform: translateY(-1px); }
+
+        .btn-del { background: #fff; border: 1px solid var(--border-color); color: #a0aec0; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; transition: all 0.2s; font-size: 14px; line-height: 1; }
+        .btn-del:hover { background: #fff1f0; border-color: #ffa39e; color: #f5222d; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        .stage-selector-wrap { max-width: 480px; background: var(--field-light); padding: 30px; border-radius: 20px; margin-bottom: 35px; border: 1px solid var(--border-color); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        
+        .no-wrap { white-space: nowrap; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🧭 Experience Value Model</h1>
+
+    <!-- 1. ECONOMY -->
+    <div class="card">
+        <h2>1. Глобальные константы сценария</h2>
+        <div class="grid">
+            <div class="field-group">
+                <label>Вход в сценарий (Старт)</label>
+                <input type="number" id="global-start" placeholder="0" oninput="updateAll()">
+            </div>
+            <div class="field-group">
+                <label>Финальные сделки (Выход)</label>
+                <input type="number" id="global-end" placeholder="0" oninput="updateAll()">
+            </div>
+            <div class="field-group">
+                <label>Общая CR сценария</label>
+                <div id="global-cr" class="res-cr">0%</div>
+            </div>
+        </div>
+        <div class="grid" style="margin-top: 35px; padding-top: 35px; border-top: 2px dashed var(--border-color);">
+            <div class="field-group">
+                <label>AOV (Выручка, ₽)</label>
+                <input type="number" id="aov" placeholder="0" oninput="updateAll()">
+            </div>
+            <div class="field-group">
+                <label>ARPU (Подписка, ₽)</label>
+                <input type="number" id="arpu" placeholder="0" oninput="updateAll()">
+            </div>
+            <div class="field-group">
+                <label>Lifetime (Месяцев)</label>
+                <input type="number" id="lt" placeholder="0" oninput="updateAll()">
+            </div>
+            <div class="field-group">
+                <label>Итого LTV клиента</label>
+                <div id="ltv-res" class="res-value">0 ₽</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. FUNNEL -->
+    <div class="card">
+        <h2>2. Потенциал этапов воронки</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 250px; text-align: left;">Название этапа</th>
+                    <th>Вход</th>
+                    <th>Выход</th>
+                    <th>Потери</th>
+                    <th>D-CR</th>
+                    <th>Pot. Deals</th>
+                    <th>Pot. AOV</th>
+                    <th>Pot. LTV</th>
+                    <th style="width: 50px;"></th>
+                </tr>
+            </thead>
+            <tbody id="funnel-body"></tbody>
+        </table>
+        <button class="btn" style="margin-top:25px" onclick="addStage()">+ Добавить этап</button>
+    </div>
+
+    <!-- 3. PROBLEMS -->
+    <div class="card">
+        <h2>3. Оценка проблем на этапе</h2>
+        <div class="stage-selector-wrap">
+            <label>Выберите этап для анализа</label>
+            <select id="stage-select" onchange="updateAll()"></select>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align: left;">Описание проблемы</th>
+                    <th style="width: 150px;">Reach (Охват)</th>
+                    <th style="width: 150px;">Impact (Сила)</th>
+                    <th style="width: 150px;">Confidence</th>
+                    <th>Индекс (F)</th>
+                    <th>Вес (%)</th>
+                    <th>AOV Cost</th>
+                    <th>LTV Cost</th>
+                    <th style="width: 50px;"></th>
+                </tr>
+            </thead>
+            <tbody id="problems-body"></tbody>
+        </table>
+        <button class="btn" style="margin-top:25px" onclick="addProblem()">+ Добавить проблему</button>
+    </div>
+</div>
+
+<script>
+    let funnelStages = [];
+    let problems = [];
+
+    const options = {
+        reach: [{v: 1.0, t: "1.0 (Global)"}, {v: 0.8, t: "0.8 (High)"}, {v: 0.5, t: "0.5 (Medium)"}, {v: 0.2, t: "0.2 (Low)"}, {v: 0.1, t: "0.1 (Local)"}],
+        impact: [{v: 1.0, t: "1.0 (Blocker)"}, {v: 0.5, t: "0.5 (Critical)"}, {v: 0.2, t: "0.2 (Friction)"}, {v: 0.05, t: "0.05 (Minor)"}, {v: 0.01, t: "0.01 (None)"}],
+        conf: [{v: 1.0, t: "1.0 (Data)"}, {v: 0.8, t: "0.8 (Research)"}, {v: 0.5, t: "0.5 (Support)"}, {v: 0.2, t: "0.2 (Hypo)"}]
+    };
+
+    function addStage() {
+        funnelStages.push({ name: `Этап ${funnelStages.length + 1}`, s: 0 });
+        renderFunnel(); updateAll();
+    }
+
+    function removeStage(index) {
+        funnelStages.splice(index, 1);
+        renderFunnel(); updateAll();
+    }
+
+    function addProblem() {
+        problems.push({ name: "", reach: 1.0, impact: 0.2, conf: 0.8 });
+        renderProblems(); updateAll();
+    }
+
+    function removeProblem(index) {
+        problems.splice(index, 1);
+        renderProblems(); updateAll();
+    }
+
+    function updateAll() {
+        const start = parseFloat(document.getElementById('global-start').value) || 0;
+        const end = parseFloat(document.getElementById('global-end').value) || 0;
+        const aov = parseFloat(document.getElementById('aov').value) || 0;
+        const arpu = parseFloat(document.getElementById('arpu').value) || 0;
+        const lt = parseFloat(document.getElementById('lt').value) || 0;
+        const ltv = aov + (arpu * lt);
+
+        document.getElementById('ltv-res').innerText = ltv.toLocaleString() + " ₽";
+        document.getElementById('global-cr').innerText = (start > 0 ? (end / start * 100).toFixed(2) : 0) + "%";
+
+        let currentInput = start;
+
+        funnelStages.forEach((stage, i) => {
+            stage.v = currentInput;
+            const losses = stage.v - stage.s;
+            const dcr = stage.v > 0 ? (end / stage.v) : 0;
+            const pd = losses * dcr;
+            stage.potAov = pd * aov;
+            stage.potLtv = pd * ltv;
+
+            const row = document.querySelector(`#funnel-body tr:nth-child(${i+1})`);
+            if (row) {
+                row.querySelector('.td-vol').innerText = Math.round(stage.v).toLocaleString();
+                row.querySelector('.td-lost').innerText = Math.round(losses).toLocaleString();
+                row.querySelector('.td-dcr').innerText = (dcr * 100).toFixed(2) + "%";
+                row.querySelector('.td-pd').innerText = Math.round(pd).toLocaleString();
+                row.querySelector('.td-paov').innerText = Math.round(stage.potAov).toLocaleString() + " ₽";
+                row.querySelector('.td-pltv').innerText = Math.round(stage.potLtv).toLocaleString() + " ₽";
+            }
+            currentInput = stage.s;
+        });
+
+        updateProblemsData();
+        updateSelectOptions();
+    }
+
+    function renderFunnel() {
+        const body = document.getElementById('funnel-body');
+        body.innerHTML = '';
+        funnelStages.forEach((stage, i) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" style="text-align:left;" value="${stage.name}" oninput="funnelStages[${i}].name=this.value; updateSelectOptions()"></td>
+                <td class="td-vol no-wrap">0</td>
+                <td><input type="number" value="${stage.s}" oninput="funnelStages[${i}].s=parseFloat(this.value); updateAll()"></td>
+                <td class="td-lost no-wrap">0</td>
+                <td class="td-dcr highlight-green no-wrap">0%</td>
+                <td class="td-pd highlight-money no-wrap">0</td>
+                <td class="td-paov highlight-money no-wrap">0 ₽</td>
+                <td class="td-pltv highlight-money no-wrap">0 ₽</td>
+                <td><button class="btn-del" onclick="removeStage(${i})">✕</button></td>
+            `;
+            body.appendChild(tr);
+        });
+    }
+
+    function renderProblems() {
+        const body = document.getElementById('problems-body');
+        body.innerHTML = '';
+        problems.forEach((p, i) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" style="text-align:left;" placeholder="Опишите барьер..." value="${p.name}" oninput="problems[${i}].name=this.value"></td>
+                <td><select onchange="problems[${i}].reach=parseFloat(this.value); updateAll()">${options.reach.map(o => `<option value="${o.v}" ${o.v==p.reach?'selected':''}>${o.t}</option>`).join('')}</select></td>
+                <td><select onchange="problems[${i}].impact=parseFloat(this.value); updateAll()">${options.impact.map(o => `<option value="${o.v}" ${o.v==p.impact?'selected':''}>${o.t}</option>`).join('')}</select></td>
+                <td><select onchange="problems[${i}].conf=parseFloat(this.value); updateAll()">${options.conf.map(o => `<option value="${o.v}" ${o.v==p.conf?'selected':''}>${o.t}</option>`).join('')}</select></td>
+                <td class="td-f no-wrap">0</td><td class="td-w no-wrap">0%</td>
+                <td class="td-a-cost highlight-money no-wrap">0 ₽</td><td class="td-l-cost highlight-money no-wrap">0 ₽</td>
+                <td><button class="btn-del" onclick="removeProblem(${i})">✕</button></td>
+            `;
+            body.appendChild(tr);
+        });
+    }
+
+    function updateProblemsData() {
+        const activeIdx = document.getElementById('stage-select').value;
+        const stage = funnelStages[activeIdx] || { potAov: 0, potLtv: 0, pd: 0 };
+        let sumF = 0;
+        problems.forEach(p => {
+            p.f = p.impact < 0.05 ? 0 : (p.reach * p.impact * p.conf);
+            sumF += p.f;
+        });
+        problems.forEach((p, i) => {
+            const weight = sumF > 0 ? (p.f / sumF) : 0;
+            const row = document.querySelector(`#problems-body tr:nth-child(${i+1})`);
+            if (row) {
+                row.querySelector('.td-f').innerText = p.f.toFixed(3);
+                row.querySelector('.td-w').innerText = p.f > 0 ? (weight * 100).toFixed(1) + "%" : "0%";
+                row.querySelector('.td-a-cost').innerText = Math.round(stage.potAov * weight).toLocaleString() + " ₽";
+                row.querySelector('.td-l-cost').innerText = Math.round(stage.potLtv * weight).toLocaleString() + " ₽";
+            }
+        });
+    }
+
+    function updateSelectOptions() {
+        const select = document.getElementById('stage-select');
+        const currentVal = select.value;
+        select.innerHTML = '';
+        funnelStages.forEach((stage, i) => {
+            const opt = document.createElement('option');
+            opt.value = i; opt.text = stage.name;
+            if (i == currentVal) opt.selected = true;
+            select.appendChild(opt);
+        });
+    }
+
+    renderFunnel(); renderProblems(); updateAll();
+</script>
+</body>
+</html>
