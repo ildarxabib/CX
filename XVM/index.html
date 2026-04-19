@@ -5,104 +5,176 @@
     <title>Experience Value Model (EVM)</title>
     <style>
         :root {
-            --accent-green: #00B944;
+            --accent-green: #00B956;
             --accent-purple: #731982;
-            --field-light: #F2F4F7;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --border-color: #E2E8F0;
-            --text-main: #1A202C;
-            --text-quiet: #718096;
-            /* Установка шрифтов MegaFon Graphik LC */
-            --font-reg: 'MegaFon Graphik LC Regular', 'Graphik LC', 'Graphik', sans-serif;
-            --font-med: 'MegaFon Graphik LC Medium', 'Graphik LC Medium', 'Graphik', sans-serif;
+            --field-bg: #F2F4F7;
+            --border-btn: #D2D5DA;
+            --text-helper: #8F96A4;
+            --gradient-start: #00B956;
+            --gradient-end: #00D2FF;
+            --text-main: #1D2023;
+            
+            /* Шрифты MegaFon Graphik LC */
+            --font-light: 'MegaFon Graphik LC Light', sans-serif;
+            --font-reg: 'MegaFon Graphik LC Regular', sans-serif;
+            --font-med: 'MegaFon Graphik LC Medium', sans-serif;
+            --font-semi: 'MegaFon Graphik LC Semibold', sans-serif;
         }
 
         body { 
             font-family: var(--font-reg);
             line-height: 1.5; 
             color: var(--text-main); 
-            max-width: 1550px; 
+            max-width: 1500px; 
             margin: 0 auto; 
-            padding: 20px 30px; 
-            background: var(--bg-color); 
+            padding: 30px; 
+            background: #FFFFFF; 
             -webkit-font-smoothing: antialiased;
         }
 
         .card { 
-            background: var(--card-bg); 
+            background: #FFFFFF; 
             padding: 24px 32px; 
-            border-radius: 16px; 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
-            margin-bottom: 20px; 
-            border: 1px solid var(--border-color);
+            border-radius: 20px; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); 
+            margin-bottom: 24px; 
+            border: 1px solid #F0F2F5;
         }
 
-        h1 { font-family: var(--font-med); font-size: 26px; color: var(--accent-purple); text-transform: uppercase; margin: 10px 0 20px 0; letter-spacing: 1.5px; text-align: center; }
-        h2 { font-family: var(--font-med); font-size: 18px; margin: 0 0 20px 0; color: var(--text-main); border-left: 5px solid var(--accent-purple); padding-left: 15px; }
+        h1 { 
+            font-family: var(--font-semi); 
+            font-size: 28px; 
+            color: var(--accent-purple);
+            text-transform: uppercase; 
+            margin: 0 0 30px 0; 
+            letter-spacing: 2px; 
+            text-align: center; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
 
-        .grid { display: flex; flex-wrap: wrap; gap: 20px; }
+        h2 { 
+            font-family: var(--font-med); 
+            font-size: 18px; 
+            margin: 0 0 24px 0; 
+            color: var(--text-main); 
+            border-left: 5px solid var(--accent-purple); 
+            padding-left: 16px; 
+        }
+
+        .grid { display: flex; flex-wrap: wrap; gap: 24px; }
         .field-group { flex: 1; min-width: 200px; display: flex; flex-direction: column; }
         
-        label { font-family: var(--font-med); font-weight: normal; margin-bottom: 8px; font-size: 10px; color: var(--text-quiet); text-transform: uppercase; letter-spacing: 1px; }
+        label { 
+            font-family: var(--font-med); 
+            margin-bottom: 8px; 
+            font-size: 10px; 
+            color: var(--text-helper); 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
         
         input, select { 
             font-family: var(--font-reg);
-            padding: 12px 16px; 
-            border: 1px solid var(--border-color); 
-            border-radius: 10px; 
-            font-size: 14px; 
-            background: var(--field-light);
+            padding: 14px 16px; 
+            border: 1px solid transparent; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            background: var(--field-bg);
             color: var(--text-main);
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             box-sizing: border-box;
         }
 
         input:focus, select:focus { 
             border-color: var(--accent-purple); 
-            background: #fff;
+            background: #FFF;
             outline: none; 
-            box-shadow: 0 0 0 4px rgba(115, 25, 130, 0.08); 
+            box-shadow: 0 0 0 4px rgba(115, 25, 130, 0.1); 
         }
 
-        .res-value { font-family: var(--font-med); font-size: 22px; color: var(--accent-purple); white-space: nowrap; }
-        .res-cr { font-family: var(--font-med); font-size: 22px; color: var(--accent-green); white-space: nowrap; }
+        .res-value { font-family: var(--font-semi); font-size: 24px; color: var(--accent-purple); white-space: nowrap; }
+        .res-cr { font-family: var(--font-semi); font-size: 24px; color: var(--accent-green); white-space: nowrap; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { font-family: var(--font-med); padding: 12px 10px; font-size: 10px; text-transform: uppercase; color: var(--text-quiet); text-align: center; border-bottom: 2px solid var(--border-color); }
-        td { padding: 10px; text-align: center; border-bottom: 1px solid var(--border-color); font-size: 13px; white-space: nowrap; background: #fff; }
+        th { 
+            font-family: var(--font-med); 
+            padding: 14px 10px; 
+            font-size: 10px; 
+            text-transform: uppercase; 
+            color: var(--text-helper); 
+            text-align: center; 
+            border-bottom: 2px solid var(--field-bg); 
+        }
+        td { 
+            font-family: var(--font-reg);
+            padding: 12px 10px; 
+            text-align: center; 
+            border-bottom: 1px solid var(--field-bg); 
+            font-size: 14px; 
+            white-space: nowrap; 
+        }
 
-        .highlight-money { font-family: var(--font-med); color: var(--accent-purple); }
-        .highlight-green { font-family: var(--font-med); color: var(--accent-green); }
+        .highlight-money { font-family: var(--font-semi); color: var(--accent-purple); }
+        .highlight-green { font-family: var(--font-semi); color: var(--accent-green); }
 
+        /* Кнопки с градиентом при наведении */
         .btn { 
             font-family: var(--font-med);
-            background: var(--accent-green); 
+            background-color: var(--accent-green); 
             color: white; 
-            border: none; 
-            padding: 14px 28px; 
-            border-radius: 12px; 
+            border: 1px solid var(--border-btn); 
+            padding: 14px 32px; 
+            border-radius: 14px; 
             cursor: pointer; 
             font-size: 13px;
             text-transform: uppercase;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-            box-shadow: 0 4px 10px rgba(0, 185, 68, 0.2);
+            transition: all 0.4s ease;
+            margin-top: 20px;
+            letter-spacing: 1px;
+            background-image: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-start) 100%);
         }
-        .btn:hover { background: #009e3a; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 185, 68, 0.3); }
+        .btn:hover { 
+            background-image: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 185, 86, 0.25);
+            border-color: transparent;
+        }
 
-        .btn-del { background: #fff; border: 1px solid var(--border-color); color: #a0aec0; cursor: pointer; width: 28px; height: 28px; border-radius: 50%; font-size: 12px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-        .btn-del:hover { background: #fff1f0; color: #f5222d; border-color: #ffa39e; }
+        .btn-del { 
+            background: white; 
+            border: 1px solid var(--border-btn); 
+            color: var(--text-helper); 
+            cursor: pointer; 
+            width: 30px; 
+            height: 30px; 
+            border-radius: 10px; 
+            font-size: 14px; 
+            transition: all 0.2s; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto; 
+        }
+        .btn-del:hover { background: #FFF1F0; color: #FF4D4F; border-color: #FF4D4F; }
 
-        .stage-selector-wrap { max-width: 450px; background: var(--field-light); padding: 20px 25px; border-radius: 14px; margin-bottom: 20px; border: 1px solid var(--border-color); }
-        
+        .stage-selector-wrap { 
+            max-width: 450px; 
+            background: var(--field-bg); 
+            padding: 20px 24px; 
+            border-radius: 16px; 
+            margin-bottom: 24px; 
+        }
+
         .no-wrap { white-space: nowrap; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🧭 Experience Value Model</h1>
+    <h1>💎 Experience Value Model</h1>
 
     <!-- 1. ECONOMY -->
     <div class="card">
@@ -121,7 +193,7 @@
                 <div id="global-cr" class="res-cr">0%</div>
             </div>
         </div>
-        <div class="grid" style="margin-top: 25px; padding-top: 25px; border-top: 1px dashed var(--border-color);">
+        <div class="grid" style="margin-top: 30px; padding-top: 30px; border-top: 1px solid var(--field-bg);">
             <div class="field-group">
                 <label>AOV (Выручка, ₽)</label>
                 <input type="number" id="aov" placeholder="0" oninput="updateAll()">
@@ -160,7 +232,7 @@
             </thead>
             <tbody id="funnel-body"></tbody>
         </table>
-        <button class="btn" onclick="addStage()">+ Добавить этап воронки</button>
+        <button class="btn" onclick="addStage()">+ Добавить этап</button>
     </div>
 
     <!-- 3. PROBLEMS -->
@@ -264,14 +336,14 @@
         funnelStages.forEach((stage, i) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="text" style="text-align:left; background:var(--field-light);" value="${stage.name}" oninput="funnelStages[${i}].name=this.value; updateSelectOptions()"></td>
-                <td class="td-vol no-wrap">0</td>
-                <td><input type="number" value="${stage.s}" style="background:var(--field-light);" oninput="funnelStages[${i}].s=parseFloat(this.value); updateAll()"></td>
-                <td class="td-lost no-wrap">0</td>
-                <td class="td-dcr highlight-green no-wrap">0%</td>
-                <td class="td-pd highlight-money no-wrap">0</td>
-                <td class="td-paov highlight-money no-wrap">0 ₽</td>
-                <td class="td-pltv highlight-money no-wrap">0 ₽</td>
+                <td><input type="text" style="text-align:left; background:var(--field-bg);" value="${stage.name}" oninput="funnelStages[${i}].name=this.value; updateSelectOptions()"></td>
+                <td class="td-vol">0</td>
+                <td><input type="number" value="${stage.s}" style="background:var(--field-bg);" oninput="funnelStages[${i}].s=parseFloat(this.value); updateAll()"></td>
+                <td class="td-lost">0</td>
+                <td class="td-dcr highlight-green">0%</td>
+                <td class="td-pd highlight-money">0</td>
+                <td class="td-paov highlight-money">0 ₽</td>
+                <td class="td-pltv highlight-money">0 ₽</td>
                 <td><button class="btn-del" onclick="removeStage(${i})">✕</button></td>
             `;
             body.appendChild(tr);
@@ -284,12 +356,12 @@
         problems.forEach((p, i) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="text" style="text-align:left; background:var(--field-light);" placeholder="Опишите барьер..." value="${p.name}" oninput="problems[${i}].name=this.value"></td>
-                <td><select style="background:var(--field-light);" onchange="problems[${i}].reach=parseFloat(this.value); updateAll()">${options.reach.map(o => `<option value="${o.v}" ${o.v==p.reach?'selected':''}>${o.t}</option>`).join('')}</select></td>
-                <td><select style="background:var(--field-light);" onchange="problems[${i}].impact=parseFloat(this.value); updateAll()">${options.impact.map(o => `<option value="${o.v}" ${o.v==p.impact?'selected':''}>${o.t}</option>`).join('')}</select></td>
-                <td><select style="background:var(--field-light);" onchange="problems[${i}].conf=parseFloat(this.value); updateAll()">${options.conf.map(o => `<option value="${o.v}" ${o.v==p.conf?'selected':''}>${o.t}</option>`).join('')}</select></td>
-                <td class="td-f no-wrap">0</td><td class="td-w no-wrap">0%</td>
-                <td class="td-a-cost highlight-money no-wrap">0 ₽</td><td class="td-l-cost highlight-money no-wrap">0 ₽</td>
+                <td><input type="text" style="text-align:left; background:var(--field-bg);" placeholder="Описание барьера..." value="${p.name}" oninput="problems[${i}].name=this.value"></td>
+                <td><select style="background:var(--field-bg);" onchange="problems[${i}].reach=parseFloat(this.value); updateAll()">${options.reach.map(o => `<option value="${o.v}" ${o.v==p.reach?'selected':''}>${o.t}</option>`).join('')}</select></td>
+                <td><select style="background:var(--field-bg);" onchange="problems[${i}].impact=parseFloat(this.value); updateAll()">${options.impact.map(o => `<option value="${o.v}" ${o.v==p.impact?'selected':''}>${o.t}</option>`).join('')}</select></td>
+                <td><select style="background:var(--field-bg);" onchange="problems[${i}].conf=parseFloat(this.value); updateAll()">${options.conf.map(o => `<option value="${o.v}" ${o.v==p.conf?'selected':''}>${o.t}</option>`).join('')}</select></td>
+                <td class="td-f">0</td><td class="td-w">0%</td>
+                <td class="td-a-cost highlight-money">0 ₽</td><td class="td-l-cost highlight-money">0 ₽</td>
                 <td><button class="btn-del" onclick="removeProblem(${i})">✕</button></td>
             `;
             body.appendChild(tr);
