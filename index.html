@@ -2,16 +2,107 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мои проекты</title>
+    <style>
+        :root {
+            --primary-green: #00B956;
+            --accent-purple: #731982;
+            --bg-light: #F2F4F7;
+            --border-gray: #D2D5DA;
+            --text-secondary: #8F96A4;
+            --gradient: linear-gradient(135deg, #00B956, #00D2FF);
+            --font-family: 'MegaFon Graphik LC', 'MegaFon Graphik LC Regular', sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            font-family: var(--font-family);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            font-weight: 600; /* Semibold */
+            color: var(--accent-purple);
+            margin-bottom: 30px;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .project-link {
+            text-decoration: none;
+            color: white;
+            background-color: var(--primary-green);
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-weight: 500; /* Medium */
+            font-size: 18px;
+            border: 1px solid var(--border-gray);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: block;
+        }
+
+        /* Эффект градиента при наведении */
+        .project-link:hover {
+            background: var(--gradient);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 185, 86, 0.3);
+        }
+
+        .description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 5px;
+            font-weight: 300; /* Light */
+        }
+
+        /* Декоративный элемент с фоном акцента */
+        .badge {
+            background-color: var(--bg-light);
+            color: var(--accent-purple);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
-    <h1>Мои проекты на GitHub</h1>
-    <ul>
-        <!-- Ссылка на папку Scoring Matrix -->
-        <li><a href="./scoring_matrix/">Scoring Matrix</a></li>
-        
-        <!-- Ссылка на папку XVM -->
-        <li><a href="./XVM/">Experience Value Model (XVM)</a></li>
-    </ul>
+
+<div class="container">
+    <div class="badge">Портфолио</div>
+    <h1>Мои проекты</h1>
+    
+    <div class="links-container">
+        <a href="./scoring_matrix/" class="project-link">
+            Scoring Matrix
+            <div class="description">Инструмент для оценки матриц</div>
+        </a>
+
+        <a href="./XVM/" class="project-link">
+            Experience Value Model
+            <div class="description">Модель ценности опыта (XVM)</div>
+        </a>
+    </div>
+</div>
+
 </body>
 </html>
