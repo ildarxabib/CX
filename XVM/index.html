@@ -1,406 +1,1079 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Experience Value Model (EVM)</title>
-    <style>
-        :root {
-            --accent-green: #00B956;
-            --accent-purple: #731982;
-            --field-bg: #F2F4F7;
-            --border-btn: #D2D5DA;
-            --text-helper: #8F96A4;
-            --gradient-start: #00B956;
-            --gradient-end: #00D2FF;
-            --text-main: #1D2023;
-            
-            /* Шрифты MegaFon Graphik LC */
-            --font-light: 'MegaFon Graphik LC Light', sans-serif;
-            --font-reg: 'MegaFon Graphik LC Regular', sans-serif;
-            --font-med: 'MegaFon Graphik LC Medium', sans-serif;
-            --font-semi: 'MegaFon Graphik LC Semibold', sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experience Value Model (XVM)</title>
+  <style>
+    :root {
+      --green: #00B956;
+      --purple: #731982;
+      --border: #D2D5DA;
+      --muted: #8F96A4;
+      --field: #F2F4F7;
+      --bg: #F8F9FB;
+      --text: #1B1F27;
+      --white: #FFFFFF;
+      --danger: #D92D20;
+      --success: #00B956;
+      --gradient: linear-gradient(90deg, #00B956 0%, #00D2FF 100%);
+      --shadow: 0 10px 30px rgba(19, 27, 45, 0.06);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+    }
 
-        body { 
-            font-family: var(--font-reg);
-            line-height: 1.5; 
-            color: var(--text-main); 
-            max-width: 1500px; 
-            margin: 0 auto; 
-            padding: 30px; 
-            background: #FFFFFF; 
-            -webkit-font-smoothing: antialiased;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        .card { 
-            background: #FFFFFF; 
-            padding: 24px 32px; 
-            border-radius: 20px; 
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); 
-            margin-bottom: 24px; 
-            border: 1px solid #F0F2F5;
-        }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        "MegaFon Graphik LC Regular",
+        "MegaFon Graphik LC Light",
+        "MegaFon Graphik LC Medium",
+        "MegaFon Graphik LC Semibold",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+      line-height: 1.4;
+    }
 
-        h1 { 
-            font-family: var(--font-semi); 
-            font-size: 28px; 
-            color: var(--accent-purple);
-            text-transform: uppercase; 
-            margin: 0 0 30px 0; 
-            letter-spacing: 2px; 
-            text-align: center; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
 
-        h2 { 
-            font-family: var(--font-med); 
-            font-size: 18px; 
-            margin: 0 0 24px 0; 
-            color: var(--text-main); 
-            border-left: 5px solid var(--accent-purple); 
-            padding-left: 16px; 
-        }
+    .page-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      font-family: "MegaFon Graphik LC Semibold", sans-serif;
+      font-size: 32px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--purple);
+      text-align: center;
+    }
 
-        .grid { display: flex; flex-wrap: wrap; gap: 24px; }
-        .field-group { flex: 1; min-width: 200px; display: flex; flex-direction: column; }
-        
-        label { 
-            font-family: var(--font-med); 
-            margin-bottom: 8px; 
-            font-size: 10px; 
-            color: var(--text-helper); 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-        }
-        
-        input, select { 
-            font-family: var(--font-reg);
-            padding: 14px 16px; 
-            border: 1px solid transparent; 
-            border-radius: 12px; 
-            font-size: 15px; 
-            background: var(--field-bg);
-            color: var(--text-main);
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-        }
+    .page-title .icon {
+      font-size: 24px;
+    }
 
-        input:focus, select:focus { 
-            border-color: var(--accent-purple); 
-            background: #FFF;
-            outline: none; 
-            box-shadow: 0 0 0 4px rgba(115, 25, 130, 0.1); 
-        }
+    .card {
+      background: var(--white);
+      border: 1px solid rgba(210, 213, 218, 0.7);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 22px;
+    }
 
-        .res-value { font-family: var(--font-semi); font-size: 24px; color: var(--accent-purple); white-space: nowrap; }
-        .res-cr { font-family: var(--font-semi); font-size: 24px; color: var(--accent-green); white-space: nowrap; }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 22px;
+      font-size: 28px;
+      font-family: "MegaFon Graphik LC Semibold", sans-serif;
+    }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { 
-            font-family: var(--font-med); 
-            padding: 14px 10px; 
-            font-size: 10px; 
-            text-transform: uppercase; 
-            color: var(--text-helper); 
-            text-align: center; 
-            border-bottom: 2px solid var(--field-bg); 
-        }
-        td { 
-            font-family: var(--font-reg);
-            padding: 12px 10px; 
-            text-align: center; 
-            border-bottom: 1px solid var(--field-bg); 
-            font-size: 14px; 
-            white-space: nowrap; 
-        }
+    .section-title::before {
+      content: "";
+      width: 5px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--purple);
+      display: inline-block;
+    }
 
-        .highlight-money { font-family: var(--font-semi); color: var(--accent-purple); }
-        .highlight-green { font-family: var(--font-semi); color: var(--accent-green); }
+    .subhint {
+      margin: -8px 0 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
 
-        /* Кнопки с градиентом при наведении */
-        .btn { 
-            font-family: var(--font-med);
-            background-color: var(--accent-green); 
-            color: white; 
-            border: 1px solid var(--border-btn); 
-            padding: 14px 32px; 
-            border-radius: 14px; 
-            cursor: pointer; 
-            font-size: 13px;
-            text-transform: uppercase;
-            transition: all 0.4s ease;
-            margin-top: 20px;
-            letter-spacing: 1px;
-            background-image: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-start) 100%);
-        }
-        .btn:hover { 
-            background-image: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 185, 86, 0.25);
-            border-color: transparent;
-        }
+    .grid-3,
+    .grid-4,
+    .grid-5 {
+      display: grid;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
 
-        .btn-del { 
-            background: white; 
-            border: 1px solid var(--border-btn); 
-            color: var(--text-helper); 
-            cursor: pointer; 
-            width: 30px; 
-            height: 30px; 
-            border-radius: 10px; 
-            font-size: 14px; 
-            transition: all 0.2s; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin: 0 auto; 
-        }
-        .btn-del:hover { background: #FFF1F0; color: #FF4D4F; border-color: #FF4D4F; }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 
-        .stage-selector-wrap { 
-            max-width: 450px; 
-            background: var(--field-bg); 
-            padding: 20px 24px; 
-            border-radius: 16px; 
-            margin-bottom: 24px; 
-        }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
 
-        .no-wrap { white-space: nowrap; }
-    </style>
+    .field label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-family: "MegaFon Graphik LC Medium", sans-serif;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      border: 1px solid transparent;
+      background: var(--field);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      min-height: 54px;
+      font-size: 16px;
+      color: var(--text);
+      outline: none;
+      transition: 0.2s ease;
+      font-family: "MegaFon Graphik LC Regular", sans-serif;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: rgba(115, 25, 130, 0.35);
+      box-shadow: 0 0 0 4px rgba(115, 25, 130, 0.08);
+      background: #fff;
+    }
+
+    .metric-box {
+      background: linear-gradient(180deg, #fff 0%, #faf7fc 100%);
+      border: 1px solid rgba(115, 25, 130, 0.12);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      min-height: 92px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .metric-box .label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .metric-box .value {
+      font-size: 34px;
+      line-height: 1;
+      color: var(--purple);
+      font-family: "MegaFon Graphik LC Semibold", sans-serif;
+    }
+
+    .metric-box .value.green {
+      color: var(--green);
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      min-height: 48px;
+      transition: 0.2s ease;
+      font-family: "MegaFon Graphik LC Medium", sans-serif;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(19, 27, 45, 0.08);
+    }
+
+    .btn-primary {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--purple);
+      border-color: rgba(115, 25, 130, 0.16);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 1100px;
+    }
+
+    thead th {
+      text-align: left;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0 10px 10px;
+      font-family: "MegaFon Graphik LC Medium", sans-serif;
+    }
+
+    tbody tr.row-card td {
+      background: var(--white);
+      padding: 8px 10px 14px;
+      vertical-align: middle;
+      border-bottom: 1px solid #eef1f4;
+    }
+
+    tbody tr.row-card:last-child td {
+      border-bottom: none;
+    }
+
+    .cell-input input,
+    .cell-input select {
+      min-height: 50px;
+      padding: 14px 14px;
+      font-size: 15px;
+    }
+
+    .readonly-pill {
+      min-height: 50px;
+      border-radius: 14px;
+      padding: 14px 14px;
+      display: flex;
+      align-items: center;
+      background: #fbfcfd;
+      border: 1px solid #edf0f4;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+
+    .readonly-pill.strong {
+      font-family: "MegaFon Graphik LC Semibold", sans-serif;
+    }
+
+    .readonly-pill.green {
+      color: var(--green);
+    }
+
+    .readonly-pill.purple {
+      color: var(--purple);
+    }
+
+    .readonly-pill.danger {
+      color: var(--danger);
+    }
+
+    .remove-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 18px;
+      transition: 0.2s ease;
+    }
+
+    .remove-btn:hover {
+      color: var(--danger);
+      border-color: rgba(217, 45, 32, 0.25);
+      background: #fff7f6;
+    }
+
+    .analysis-toolbar {
+      display: grid;
+      grid-template-columns: minmax(260px, 360px) 1fr;
+      gap: 18px;
+      margin-bottom: 20px;
+      align-items: end;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 32px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-family: "MegaFon Graphik LC Medium", sans-serif;
+    }
+
+    .badge.success {
+      background: rgba(0, 185, 86, 0.1);
+      color: var(--green);
+    }
+
+    .badge.muted {
+      background: #f2f4f7;
+      color: var(--muted);
+    }
+
+    .inline-stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      min-height: 54px;
+    }
+
+    .inline-stat {
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: #fafbfc;
+      border: 1px solid #edf0f4;
+      font-size: 14px;
+    }
+
+    .inline-stat strong {
+      font-family: "MegaFon Graphik LC Semibold", sans-serif;
+      color: var(--purple);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .summary-card {
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      border: 1px solid #edf0f4;
+    }
+
+    .summary-card .summary-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .summary-card .summary-value {
+      font-size: 28px;
+      line-height: 1.1;
+      font-family: "MegaFon Graphik LC Semibold", sans-serif;
+      color: var(--text);
+    }
+
+    .summary-card .summary-value.purple {
+      color: var(--purple);
+    }
+
+    .summary-card .summary-value.green {
+      color: var(--green);
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 1100px) {
+      .grid-4,
+      .grid-5,
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .analysis-toolbar {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .container {
+        padding: 20px 14px 40px;
+      }
+
+      .page-title {
+        font-size: 22px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .section-title {
+        font-size: 22px;
+      }
+
+      .grid-3,
+      .grid-4,
+      .grid-5,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-box .value {
+        font-size: 28px;
+      }
+    }
+  </style>
 </head>
 <body>
-
-<div class="container">
-    <h1>💎 Experience Value Model</h1>
-
-    <!-- 1. ECONOMY -->
-    <div class="card">
-        <h2>1. Глобальные константы сценария</h2>
-        <div class="grid">
-            <div class="field-group">
-                <label>Вход в сценарий (Старт)</label>
-                <input type="number" id="global-start" placeholder="0" oninput="updateAll()">
-            </div>
-            <div class="field-group">
-                <label>Финальные сделки (Выход)</label>
-                <input type="number" id="global-end" placeholder="0" oninput="updateAll()">
-            </div>
-            <div class="field-group">
-                <label>Общая CR сценария</label>
-                <div id="global-cr" class="res-cr">0%</div>
-            </div>
-        </div>
-        <div class="grid" style="margin-top: 30px; padding-top: 30px; border-top: 1px solid var(--field-bg);">
-            <div class="field-group">
-                <label>AOV (Выручка, ₽)</label>
-                <input type="number" id="aov" placeholder="0" oninput="updateAll()">
-            </div>
-            <div class="field-group">
-                <label>ARPU (Подписка, ₽)</label>
-                <input type="number" id="arpu" placeholder="0" oninput="updateAll()">
-            </div>
-            <div class="field-group">
-                <label>Lifetime (Месяцев)</label>
-                <input type="number" id="lt" placeholder="0" oninput="updateAll()">
-            </div>
-            <div class="field-group">
-                <label>Итого LTV клиента</label>
-                <div id="ltv-res" class="res-value">0 ₽</div>
-            </div>
-        </div>
+  <div class="container">
+    <div class="page-title">
+      <span class="icon">💎</span>
+      <span>Experience Value Model</span>
     </div>
 
-    <!-- 2. FUNNEL -->
-    <div class="card">
-        <h2>2. Потенциал этапов воронки</h2>
+    <section class="card">
+      <h2 class="section-title">1. Глобальные константы сценария</h2>
+      <p class="subhint">
+        Базовая экономика продукта и верхнеуровневые параметры сценария.
+      </p>
+
+      <div class="grid-3">
+        <div class="field">
+          <label for="scenarioStart">Вход в сценарий (старт)</label>
+          <input id="scenarioStart" type="number" min="0" step="1" placeholder="0" />
+        </div>
+
+        <div class="field">
+          <label for="scenarioFinal">Финальные сделки (выход)</label>
+          <input id="scenarioFinal" type="number" min="0" step="1" placeholder="0" />
+        </div>
+
+        <div class="metric-box">
+          <div class="label">Общая CR сценария</div>
+          <div id="totalScenarioCR" class="value green">0%</div>
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="field">
+          <label for="aov">AOV (выручка, ₽)</label>
+          <input id="aov" type="number" min="0" step="1" placeholder="0" />
+        </div>
+
+        <div class="field">
+          <label for="arpu">ARPU (подписка, ₽)</label>
+          <input id="arpu" type="number" min="0" step="1" placeholder="0" />
+        </div>
+
+        <div class="field">
+          <label for="lt">Lifetime (месяцев)</label>
+          <input id="lt" type="number" min="0" step="1" placeholder="0" />
+        </div>
+
+        <div class="metric-box">
+          <div class="label">Итоговый LTV клиента</div>
+          <div id="ltvValue" class="value">0 ₽</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">2. Потенциал этапов воронки</h2>
+      <p class="subhint">
+        Заполняются название этапа, вход и выход. Остальные показатели рассчитываются автоматически.
+      </p>
+
+      <div class="table-wrap">
         <table>
-            <thead>
-                <tr>
-                    <th style="width: 250px; text-align: left;">Название этапа</th>
-                    <th>Вход</th>
-                    <th>Выход</th>
-                    <th>Потери</th>
-                    <th>D-CR</th>
-                    <th>Pot. Deals</th>
-                    <th>Pot. AOV</th>
-                    <th>Pot. LTV</th>
-                    <th style="width: 60px;"></th>
-                </tr>
-            </thead>
-            <tbody id="funnel-body"></tbody>
+          <thead>
+            <tr>
+              <th>Название этапа</th>
+              <th>Вход</th>
+              <th>Выход</th>
+              <th>Потери</th>
+              <th>CR шага</th>
+              <th>D-CR</th>
+              <th>Pot. Deals</th>
+              <th>Pot. AOV</th>
+              <th>Pot. LTV</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="stagesTableBody"></tbody>
         </table>
-        <button class="btn" onclick="addStage()">+ Добавить этап</button>
-    </div>
+      </div>
 
-    <!-- 3. PROBLEMS -->
-    <div class="card">
-        <h2>3. Оценка проблем на этапе</h2>
-        <div class="stage-selector-wrap">
-            <label>Выберите этап для анализа</label>
-            <select id="stage-select" onchange="updateAll()"></select>
+      <div class="toolbar">
+        <button class="btn btn-primary" id="addStageBtn">+ Добавить этап</button>
+        <button class="btn btn-secondary" id="fillDemoBtn">Заполнить демо</button>
+        <button class="btn btn-ghost" id="clearAllBtn">Очистить всё</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">3. Оценка проблем на этапе</h2>
+      <p class="subhint">
+        Денежный потенциал выбранного этапа распределяется между проблемами по их friction index.
+      </p>
+
+      <div class="analysis-toolbar">
+        <div class="field">
+          <label for="stageSelector">Выберите этап для анализа</label>
+          <select id="stageSelector"></select>
         </div>
-        
+
+        <div class="inline-stats">
+          <div class="inline-stat">Потенциал AOV: <strong id="selectedStageAov">0 ₽</strong></div>
+          <div class="inline-stat">Потенциал LTV: <strong id="selectedStageLtv">0 ₽</strong></div>
+          <div class="inline-stat">Потери на этапе: <strong id="selectedStageLosses">0</strong></div>
+          <div class="inline-stat">Downstream CR: <strong id="selectedStageDcr">0%</strong></div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
         <table>
-            <thead>
-                <tr>
-                    <th style="text-align: left;">Описание проблемы</th>
-                    <th style="width: 140px;">Reach (Охват)</th>
-                    <th style="width: 140px;">Impact (Сила)</th>
-                    <th style="width: 140px;">Confidence</th>
-                    <th>Индекс (F)</th>
-                    <th>Вес (%)</th>
-                    <th>AOV Cost</th>
-                    <th>LTV Cost</th>
-                    <th style="width: 60px;"></th>
-                </tr>
-            </thead>
-            <tbody id="problems-body"></tbody>
+          <thead>
+            <tr>
+              <th>Описание проблемы</th>
+              <th>Reach (охват)</th>
+              <th>Impact (сила)</th>
+              <th>Confidence</th>
+              <th>Индекс (F)</th>
+              <th>Статус</th>
+              <th>Вес (%)</th>
+              <th>AOV Cost</th>
+              <th>LTV Cost</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="problemsTableBody"></tbody>
         </table>
-        <button class="btn" onclick="addProblem()">+ Добавить проблему</button>
-    </div>
-</div>
+      </div>
 
-<script>
-    let funnelStages = [];
-    let problems = [];
+      <div class="toolbar">
+        <button class="btn btn-primary" id="addProblemBtn">+ Добавить проблему</button>
+      </div>
 
-    const options = {
-        reach: [{v: 1.0, t: "1.0 (Global)"}, {v: 0.8, t: "0.8 (High)"}, {v: 0.5, t: "0.5 (Medium)"}, {v: 0.2, t: "0.2 (Low)"}, {v: 0.1, t: "0.1 (Local)"}],
-        impact: [{v: 1.0, t: "1.0 (Blocker)"}, {v: 0.5, t: "0.5 (Critical)"}, {v: 0.2, t: "0.2 (Friction)"}, {v: 0.05, t: "0.05 (Minor)"}, {v: 0.01, t: "0.01 (None)"}],
-        conf: [{v: 1.0, t: "1.0 (Data)"}, {v: 0.8, t: "0.8 (Research)"}, {v: 0.5, t: "0.5 (Support)"}, {v: 0.2, t: "0.2 (Hypo)"}]
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-label">Коммерческих проблем</div>
+          <div id="commercialCount" class="summary-value purple">0</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Гигиенических проблем</div>
+          <div id="hygieneCount" class="summary-value">0</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Суммарный Index этапа</div>
+          <div id="sumFValue" class="summary-value green">0.000</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Распределённый LTV</div>
+          <div id="distributedLtv" class="summary-value purple">0 ₽</div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        Правило фильтра шума: если <strong>Impact &lt; 0.05</strong>, проблема получает статус “Без влияния” и не участвует в финансовом распределении.
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const reachOptions = [
+      { value: 1.0, label: "1.0 (Global)" },
+      { value: 0.5, label: "0.5 (Significant)" },
+      { value: 0.1, label: "0.1 (Local)" }
+    ];
+
+    const impactOptions = [
+      { value: 1.0, label: "1.0 (Blocker)" },
+      { value: 0.5, label: "0.5 (Critical)" },
+      { value: 0.2, label: "0.2 (Friction)" },
+      { value: 0.01, label: "0.01 (Minor)" }
+    ];
+
+    const confidenceOptions = [
+      { value: 1.0, label: "1.0 (Data)" },
+      { value: 0.7, label: "0.7 (Research)" },
+      { value: 0.2, label: "0.2 (Hypothesis)" }
+    ];
+
+    const state = {
+      stages: [],
+      problemsByStage: {},
+      selectedStageId: null
     };
 
-    function addStage() {
-        funnelStages.push({ name: `Этап ${funnelStages.length + 1}`, s: 0 });
-        renderFunnel(); updateAll();
+    const els = {
+      scenarioStart: document.getElementById("scenarioStart"),
+      scenarioFinal: document.getElementById("scenarioFinal"),
+      aov: document.getElementById("aov"),
+      arpu: document.getElementById("arpu"),
+      lt: document.getElementById("lt"),
+
+      totalScenarioCR: document.getElementById("totalScenarioCR"),
+      ltvValue: document.getElementById("ltvValue"),
+
+      stagesTableBody: document.getElementById("stagesTableBody"),
+      addStageBtn: document.getElementById("addStageBtn"),
+      fillDemoBtn: document.getElementById("fillDemoBtn"),
+      clearAllBtn: document.getElementById("clearAllBtn"),
+
+      stageSelector: document.getElementById("stageSelector"),
+      selectedStageAov: document.getElementById("selectedStageAov"),
+      selectedStageLtv: document.getElementById("selectedStageLtv"),
+      selectedStageLosses: document.getElementById("selectedStageLosses"),
+      selectedStageDcr: document.getElementById("selectedStageDcr"),
+
+      problemsTableBody: document.getElementById("problemsTableBody"),
+      addProblemBtn: document.getElementById("addProblemBtn"),
+
+      commercialCount: document.getElementById("commercialCount"),
+      hygieneCount: document.getElementById("hygieneCount"),
+      sumFValue: document.getElementById("sumFValue"),
+      distributedLtv: document.getElementById("distributedLtv")
+    };
+
+    function uid(prefix = "id") {
+      return `${prefix}_${Math.random().toString(36).slice(2, 9)}`;
     }
 
-    function removeStage(index) {
-        funnelStages.splice(index, 1);
-        renderFunnel(); updateAll();
+    function n(value) {
+      const num = Number(value);
+      return Number.isFinite(num) ? num : 0;
     }
 
-    function addProblem() {
-        problems.push({ name: "", reach: 1.0, impact: 0.2, conf: 0.8 });
-        renderProblems(); updateAll();
+    function safeDiv(a, b) {
+      return b > 0 ? a / b : 0;
     }
 
-    function removeProblem(index) {
-        problems.splice(index, 1);
-        renderProblems(); updateAll();
+    function formatNumber(value, fractionDigits = 0) {
+      return new Intl.NumberFormat("ru-RU", {
+        minimumFractionDigits: fractionDigits,
+        maximumFractionDigits: fractionDigits
+      }).format(n(value));
     }
 
-    function updateAll() {
-        const start = parseFloat(document.getElementById('global-start').value) || 0;
-        const end = parseFloat(document.getElementById('global-end').value) || 0;
-        const aov = parseFloat(document.getElementById('aov').value) || 0;
-        const arpu = parseFloat(document.getElementById('arpu').value) || 0;
-        const lt = parseFloat(document.getElementById('lt').value) || 0;
-        const ltv = aov + (arpu * lt);
-
-        document.getElementById('ltv-res').innerText = ltv.toLocaleString() + " ₽";
-        document.getElementById('global-cr').innerText = (start > 0 ? (end / start * 100).toFixed(2) : 0) + "%";
-
-        let currentInput = start;
-
-        funnelStages.forEach((stage, i) => {
-            stage.v = currentInput;
-            const losses = stage.v - stage.s;
-            const dcr = stage.v > 0 ? (end / stage.v) : 0;
-            const pd = losses * dcr;
-            stage.potAov = pd * aov;
-            stage.potLtv = pd * ltv;
-
-            const row = document.querySelector(`#funnel-body tr:nth-child(${i+1})`);
-            if (row) {
-                row.querySelector('.td-vol').innerText = Math.round(stage.v).toLocaleString();
-                row.querySelector('.td-lost').innerText = Math.round(losses).toLocaleString();
-                row.querySelector('.td-dcr').innerText = (dcr * 100).toFixed(2) + "%";
-                row.querySelector('.td-pd').innerText = Math.round(pd).toLocaleString();
-                row.querySelector('.td-paov').innerText = Math.round(stage.potAov).toLocaleString() + " ₽";
-                row.querySelector('.td-pltv').innerText = Math.round(stage.potLtv).toLocaleString() + " ₽";
-            }
-            currentInput = stage.s;
-        });
-
-        updateProblemsData();
-        updateSelectOptions();
+    function formatPercent(value, fractionDigits = 2) {
+      return `${formatNumber(value * 100, fractionDigits)}%`;
     }
 
-    function renderFunnel() {
-        const body = document.getElementById('funnel-body');
-        body.innerHTML = '';
-        funnelStages.forEach((stage, i) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><input type="text" style="text-align:left; background:var(--field-bg);" value="${stage.name}" oninput="funnelStages[${i}].name=this.value; updateSelectOptions()"></td>
-                <td class="td-vol">0</td>
-                <td><input type="number" value="${stage.s}" style="background:var(--field-bg);" oninput="funnelStages[${i}].s=parseFloat(this.value); updateAll()"></td>
-                <td class="td-lost">0</td>
-                <td class="td-dcr highlight-green">0%</td>
-                <td class="td-pd highlight-money">0</td>
-                <td class="td-paov highlight-money">0 ₽</td>
-                <td class="td-pltv highlight-money">0 ₽</td>
-                <td><button class="btn-del" onclick="removeStage(${i})">✕</button></td>
-            `;
-            body.appendChild(tr);
-        });
+    function formatMoney(value) {
+      return `${formatNumber(value, 0)} ₽`;
+    }
+
+    function createOptionList(options, selectedValue) {
+      return options.map(opt => `
+        <option value="${opt.value}" ${Number(opt.value) === Number(selectedValue) ? "selected" : ""}>
+          ${opt.label}
+        </option>
+      `).join("");
+    }
+
+    function getLtv() {
+      return n(els.aov.value) + (n(els.arpu.value) * n(els.lt.value));
+    }
+
+    function getAov() {
+      return n(els.aov.value);
+    }
+
+    function computeStageMetrics() {
+      const stages = state.stages.map(stage => ({
+        ...stage,
+        input: n(stage.input),
+        output: n(stage.output)
+      }));
+
+      stages.forEach(stage => {
+        stage.losses = Math.max(stage.input - stage.output, 0);
+        stage.cr = safeDiv(stage.output, stage.input);
+        stage.dcr = 0;
+        stage.potentialDeals = 0;
+        stage.potentialAov = 0;
+        stage.potentialLtv = 0;
+      });
+
+      for (let i = stages.length - 1; i >= 0; i--) {
+        if (i === stages.length - 1) {
+          stages[i].dcr = stages[i].cr;
+        } else {
+          stages[i].dcr = stages[i].cr * stages[i + 1].dcr;
+        }
+      }
+
+      const aov = getAov();
+      const ltv = getLtv();
+
+      stages.forEach(stage => {
+        stage.potentialDeals = stage.losses * stage.dcr;
+        stage.potentialAov = stage.potentialDeals * aov;
+        stage.potentialLtv = stage.potentialDeals * ltv;
+      });
+
+      return stages;
+    }
+
+    function getSelectedStageComputed() {
+      const computed = computeStageMetrics();
+      return computed.find(s => s.id === state.selectedStageId) || null;
+    }
+
+    function renderTopMetrics() {
+      const start = n(els.scenarioStart.value);
+      const finalDeals = n(els.scenarioFinal.value);
+      const totalCR = safeDiv(finalDeals, start);
+      const ltv = getLtv();
+
+      els.totalScenarioCR.textContent = formatPercent(totalCR, 2);
+      els.ltvValue.textContent = formatMoney(ltv);
+    }
+
+    function renderStages() {
+      const computed = computeStageMetrics();
+
+      els.stagesTableBody.innerHTML = computed.map(stage => `
+        <tr class="row-card">
+          <td class="cell-input">
+            <input type="text" value="${escapeHtml(stage.name)}" data-stage-id="${stage.id}" data-field="name" placeholder="Название этапа" />
+          </td>
+          <td class="cell-input">
+            <input type="number" min="0" step="1" value="${stage.input}" data-stage-id="${stage.id}" data-field="input" placeholder="0" />
+          </td>
+          <td class="cell-input">
+            <input type="number" min="0" step="1" value="${stage.output}" data-stage-id="${stage.id}" data-field="output" placeholder="0" />
+          </td>
+          <td><div class="readonly-pill">${formatNumber(stage.losses)}</div></td>
+          <td><div class="readonly-pill">${formatPercent(stage.cr, 1)}</div></td>
+          <td><div class="readonly-pill strong green">${formatPercent(stage.dcr, 2)}</div></td>
+          <td><div class="readonly-pill strong">${formatNumber(stage.potentialDeals, 0)}</div></td>
+          <td><div class="readonly-pill purple">${formatMoney(stage.potentialAov)}</div></td>
+          <td><div class="readonly-pill strong purple">${formatMoney(stage.potentialLtv)}</div></td>
+          <td>
+            <button class="remove-btn" data-remove-stage="${stage.id}" title="Удалить этап">×</button>
+          </td>
+        </tr>
+      `).join("");
+
+      bindStageEvents();
+      renderStageSelector();
+      renderProblemStageSummary();
+    }
+
+    function renderStageSelector() {
+      const stages = computeStageMetrics();
+
+      if (!stages.length) {
+        els.stageSelector.innerHTML = `<option value="">Нет этапов</option>`;
+        state.selectedStageId = null;
+        renderProblems();
+        return;
+      }
+
+      if (!state.selectedStageId || !stages.some(s => s.id === state.selectedStageId)) {
+        state.selectedStageId = stages[0].id;
+      }
+
+      els.stageSelector.innerHTML = stages.map(stage => `
+        <option value="${stage.id}" ${stage.id === state.selectedStageId ? "selected" : ""}>
+          ${escapeHtml(stage.name || "Без названия")}
+        </option>
+      `).join("");
+    }
+
+    function renderProblemStageSummary() {
+      const stage = getSelectedStageComputed();
+
+      if (!stage) {
+        els.selectedStageAov.textContent = formatMoney(0);
+        els.selectedStageLtv.textContent = formatMoney(0);
+        els.selectedStageLosses.textContent = "0";
+        els.selectedStageDcr.textContent = "0%";
+        els.commercialCount.textContent = "0";
+        els.hygieneCount.textContent = "0";
+        els.sumFValue.textContent = "0.000";
+        els.distributedLtv.textContent = formatMoney(0);
+        return;
+      }
+
+      els.selectedStageAov.textContent = formatMoney(stage.potentialAov);
+      els.selectedStageLtv.textContent = formatMoney(stage.potentialLtv);
+      els.selectedStageLosses.textContent = formatNumber(stage.losses);
+      els.selectedStageDcr.textContent = formatPercent(stage.dcr, 2);
+
+      const problems = state.problemsByStage[state.selectedStageId] || [];
+      const commercial = problems.filter(p => n(p.impact) >= 0.05);
+      const hygiene = problems.filter(p => n(p.impact) < 0.05);
+      const sumF = commercial.reduce((acc, p) => acc + (n(p.reach) * n(p.impact) * n(p.confidence)), 0);
+
+      els.commercialCount.textContent = String(commercial.length);
+      els.hygieneCount.textContent = String(hygiene.length);
+      els.sumFValue.textContent = formatNumber(sumF, 3);
+      els.distributedLtv.textContent = formatMoney(stage.potentialLtv);
     }
 
     function renderProblems() {
-        const body = document.getElementById('problems-body');
-        body.innerHTML = '';
-        problems.forEach((p, i) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><input type="text" style="text-align:left; background:var(--field-bg);" placeholder="Описание барьера..." value="${p.name}" oninput="problems[${i}].name=this.value"></td>
-                <td><select style="background:var(--field-bg);" onchange="problems[${i}].reach=parseFloat(this.value); updateAll()">${options.reach.map(o => `<option value="${o.v}" ${o.v==p.reach?'selected':''}>${o.t}</option>`).join('')}</select></td>
-                <td><select style="background:var(--field-bg);" onchange="problems[${i}].impact=parseFloat(this.value); updateAll()">${options.impact.map(o => `<option value="${o.v}" ${o.v==p.impact?'selected':''}>${o.t}</option>`).join('')}</select></td>
-                <td><select style="background:var(--field-bg);" onchange="problems[${i}].conf=parseFloat(this.value); updateAll()">${options.conf.map(o => `<option value="${o.v}" ${o.v==p.conf?'selected':''}>${o.t}</option>`).join('')}</select></td>
-                <td class="td-f">0</td><td class="td-w">0%</td>
-                <td class="td-a-cost highlight-money">0 ₽</td><td class="td-l-cost highlight-money">0 ₽</td>
-                <td><button class="btn-del" onclick="removeProblem(${i})">✕</button></td>
-            `;
-            body.appendChild(tr);
-        });
+      const stage = getSelectedStageComputed();
+
+      if (!stage) {
+        els.problemsTableBody.innerHTML = "";
+        renderProblemStageSummary();
+        return;
+      }
+
+      const problems = state.problemsByStage[state.selectedStageId] || [];
+      const commercialProblems = problems.filter(p => n(p.impact) >= 0.05);
+      const sumF = commercialProblems.reduce((acc, p) => acc + (n(p.reach) * n(p.impact) * n(p.confidence)), 0);
+
+      els.problemsTableBody.innerHTML = problems.map(problem => {
+        const F = n(problem.reach) * n(problem.impact) * n(problem.confidence);
+        const isCommercial = n(problem.impact) >= 0.05;
+        const weight = isCommercial && sumF > 0 ? F / sumF : 0;
+        const aovCost = stage.potentialAov * weight;
+        const ltvCost = stage.potentialLtv * weight;
+        const statusHtml = isCommercial
+          ? `<span class="badge success">Коммерческая</span>`
+          : `<span class="badge muted">Без влияния</span>`;
+
+        return `
+          <tr class="row-card">
+            <td class="cell-input">
+              <input type="text" value="${escapeHtml(problem.description)}" data-problem-id="${problem.id}" data-field="description" placeholder="Описание барьера..." />
+            </td>
+            <td class="cell-input">
+              <select data-problem-id="${problem.id}" data-field="reach">
+                ${createOptionList(reachOptions, problem.reach)}
+              </select>
+            </td>
+            <td class="cell-input">
+              <select data-problem-id="${problem.id}" data-field="impact">
+                ${createOptionList(impactOptions, problem.impact)}
+              </select>
+            </td>
+            <td class="cell-input">
+              <select data-problem-id="${problem.id}" data-field="confidence">
+                ${createOptionList(confidenceOptions, problem.confidence)}
+              </select>
+            </td>
+            <td><div class="readonly-pill strong">${formatNumber(F, 3)}</div></td>
+            <td>${statusHtml}</td>
+            <td><div class="readonly-pill">${formatPercent(weight, 1)}</div></td>
+            <td><div class="readonly-pill purple">${formatMoney(aovCost)}</div></td>
+            <td><div class="readonly-pill strong purple">${formatMoney(ltvCost)}</div></td>
+            <td>
+              <button class="remove-btn" data-remove-problem="${problem.id}" title="Удалить проблему">×</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      bindProblemEvents();
+      renderProblemStageSummary();
     }
 
-    function updateProblemsData() {
-        const activeIdx = document.getElementById('stage-select').value;
-        const stage = funnelStages[activeIdx] || { potAov: 0, potLtv: 0, pd: 0 };
-        let sumF = 0;
-        problems.forEach(p => {
-            p.f = p.impact < 0.05 ? 0 : (p.reach * p.impact * p.conf);
-            sumF += p.f;
+    function bindStageEvents() {
+      els.stagesTableBody.querySelectorAll("input").forEach(input => {
+        input.addEventListener("input", (e) => {
+          const id = e.target.dataset.stageId;
+          const field = e.target.dataset.field;
+          const stage = state.stages.find(s => s.id === id);
+          if (!stage) return;
+          stage[field] = field === "name" ? e.target.value : n(e.target.value);
+          rerenderAll();
         });
-        problems.forEach((p, i) => {
-            const weight = sumF > 0 ? (p.f / sumF) : 0;
-            const row = document.querySelector(`#problems-body tr:nth-child(${i+1})`);
-            if (row) {
-                row.querySelector('.td-f').innerText = p.f.toFixed(3);
-                row.querySelector('.td-w').innerText = p.f > 0 ? (weight * 100).toFixed(1) + "%" : "0%";
-                row.querySelector('.td-a-cost').innerText = Math.round(stage.potAov * weight).toLocaleString() + " ₽";
-                row.querySelector('.td-l-cost').innerText = Math.round(stage.potLtv * weight).toLocaleString() + " ₽";
-            }
+      });
+
+      els.stagesTableBody.querySelectorAll("[data-remove-stage]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.removeStage;
+          state.stages = state.stages.filter(s => s.id !== id);
+          delete state.problemsByStage[id];
+          if (state.selectedStageId === id) state.selectedStageId = null;
+          rerenderAll();
         });
+      });
     }
 
-    function updateSelectOptions() {
-        const select = document.getElementById('stage-select');
-        const currentVal = select.value;
-        select.innerHTML = '';
-        funnelStages.forEach((stage, i) => {
-            const opt = document.createElement('option');
-            opt.value = i; opt.text = stage.name;
-            if (i == currentVal) opt.selected = true;
-            select.appendChild(opt);
+    function bindProblemEvents() {
+      els.problemsTableBody.querySelectorAll("input, select").forEach(input => {
+        input.addEventListener("input", onProblemFieldChange);
+        input.addEventListener("change", onProblemFieldChange);
+      });
+
+      els.problemsTableBody.querySelectorAll("[data-remove-problem]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (!state.selectedStageId) return;
+          const id = btn.dataset.removeProblem;
+          state.problemsByStage[state.selectedStageId] =
+            (state.problemsByStage[state.selectedStageId] || []).filter(p => p.id !== id);
+          renderProblems();
         });
+      });
     }
 
-    renderFunnel(); renderProblems(); updateAll();
-</script>
+    function onProblemFieldChange(e) {
+      if (!state.selectedStageId) return;
+      const id = e.target.dataset.problemId;
+      const field = e.target.dataset.field;
+      const list = state.problemsByStage[state.selectedStageId] || [];
+      const problem = list.find(p => p.id === id);
+      if (!problem) return;
+
+      problem[field] = field === "description" ? e.target.value : Number(e.target.value);
+      renderProblems();
+    }
+
+    function addStage(stage = null) {
+      const newStage = stage || {
+        id: uid("stage"),
+        name: `Этап ${state.stages.length + 1}`,
+        input: 0,
+        output: 0
+      };
+      state.stages.push(newStage);
+      if (!state.problemsByStage[newStage.id]) state.problemsByStage[newStage.id] = [];
+      if (!state.selectedStageId) state.selectedStageId = newStage.id;
+      rerenderAll();
+    }
+
+    function addProblem(problem = null) {
+      if (!state.selectedStageId) return;
+      const newProblem = problem || {
+        id: uid("problem"),
+        description: "",
+        reach: 1.0,
+        impact: 0.2,
+        confidence: 0.7
+      };
+      if (!state.problemsByStage[state.selectedStageId]) {
+        state.problemsByStage[state.selectedStageId] = [];
+      }
+      state.problemsByStage[state.selectedStageId].push(newProblem);
+      renderProblems();
+    }
+
+    function rerenderAll() {
+      renderTopMetrics();
+      renderStages();
+      renderProblems();
+    }
+
+    function fillDemo() {
+      els.scenarioStart.value = 82000;
+      els.scenarioFinal.value = 217;
+      els.aov.value = 46000;
+      els.arpu.value = 3000;
+      els.lt.value = 24;
+
+      state.stages = [];
+      state.problemsByStage = {};
+      state.selectedStageId = null;
+
+      const demoStages = [
+        { id: uid("stage"), name: "Визит → Заявка", input: 82000, output: 2535 },
+        { id: uid("stage"), name: "Заявка → КП", input: 2535, output: 928 },
+        { id: uid("stage"), name: "КП → Сделка", input: 928, output: 217 }
+      ];
+
+      demoStages.forEach(stage => {
+        state.stages.push(stage);
+        state.problemsByStage[stage.id] = [];
+      });
+
+      state.selectedStageId = demoStages[2].id;
+
+      state.problemsByStage[demoStages[2].id] = [
+        {
+          id: uid("problem"),
+          description: "Ошибка входа в ЛК",
+          reach: 1.0,
+          impact: 0.5,
+          confidence: 0.7
+        },
+        {
+          id: uid("problem"),
+          description: "Долгая отгрузка оборудования",
+          reach: 0.5,
+          impact: 0.2,
+          confidence: 1.0
+        },
+        {
+          id: uid("problem"),
+          description: "Опечатка в письме",
+          reach: 1.0,
+          impact: 0.01,
+          confidence: 1.0
+        }
+      ];
+
+      rerenderAll();
+    }
+
+    function clearAll() {
+      els.scenarioStart.value = "";
+      els.scenarioFinal.value = "";
+      els.aov.value = "";
+      els.arpu.value = "";
+      els.lt.value = "";
+
+      state.stages = [];
+      state.problemsByStage = {};
+      state.selectedStageId = null;
+
+      addStage({
+        id: uid("stage"),
+        name: "Этап 1",
+        input: 0,
+        output: 0
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    els.addStageBtn.addEventListener("click", () => addStage());
+    els.addProblemBtn.addEventListener("click", () => addProblem());
+    els.fillDemoBtn.addEventListener("click", fillDemo);
+    els.clearAllBtn.addEventListener("click", clearAll);
+
+    els.stageSelector.addEventListener("change", (e) => {
+      state.selectedStageId = e.target.value;
+      renderProblems();
+    });
+
+    [els.scenarioStart, els.scenarioFinal, els.aov, els.arpu, els.lt].forEach(input => {
+      input.addEventListener("input", rerenderAll);
+    });
+
+    clearAll();
+  </script>
 </body>
 </html>
