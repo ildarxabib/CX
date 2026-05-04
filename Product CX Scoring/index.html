@@ -1,140 +1,709 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CX / Product Review Scorecard</title>
-  <style>
-    :root {
-      --green: #00B956;
-      --green-hover: #00A94F;
-      --green-pressed: #009447;
-      --purple: #731982;
-      --bg: #F2F4F7;
-      --card: #FFFFFF;
-      --surface: #F7F8FA;
-      --border: #D2D5DA;
-      --border-soft: #E6E9EE;
-      --text: #2B2D33;
-      --secondary: #8F96A4;
-      --disabled: #A8AFB9;
-      --inverse: #FFFFFF;
-      --success-bg: #EAFBF1;
-      --info-bg: #DDF5FF;
-      --warning-bg: #FFF6E5;
-      --error-bg: #FFF0F0;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: "MegaFon Graphik LC", "Inter", Arial, sans-serif; font-size: 16px; line-height: 1.5; }
-    .container { max-width: 1280px; margin: 0 auto; padding: 48px 32px 80px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 24px; box-shadow: 0 12px 32px rgba(43,45,51,0.06); margin-bottom: 24px; overflow: hidden; }
-    .hero { background: linear-gradient(135deg, #FFFFFF 0%, #EAFBF1 60%, #DDF5FF 100%); padding: 40px; }
-    h1 { margin: 0 0 10px; font-size: 44px; font-weight: 700; line-height: 1.05; letter-spacing: -0.03em; }
-    h2 { margin: 0 0 16px; font-size: 32px; font-weight: 700; line-height: 1.15; }
-    h3 { margin: 0; font-size: 24px; font-weight: 600; }
-    .muted { color: var(--secondary); font-size: 13px; }
-    .hero-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 14px; margin-top: 22px; }
-    label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--secondary); }
-    input, select, textarea { width:100%; background:#fff; border:1px solid var(--border); border-radius:16px; padding:12px 14px; font-size:15px; color:var(--text); outline:none; font-family:inherit; }
-    input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 4px rgba(0,185,86,.12); }
-    textarea { min-height: 72px; resize: vertical; }
-    .sticky { position: sticky; top: 8px; z-index: 50; padding: 20px 24px; }
-    .row { display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
-    .score { font-size: 44px; font-weight: 700; line-height:1; color: var(--green); }
-    .zone { border-radius: 999px; padding: 8px 12px; font-size: 13px; font-weight: 600; }
-    .progress { height: 12px; background:#e8ebf0; border-radius:999px; overflow:hidden; min-width:260px; flex:1; }
-    .progress > span { display:block; height:100%; width:0; background: linear-gradient(90deg,var(--green),var(--purple)); }
-    .buttons { display:flex; gap:10px; flex-wrap:wrap; }
-    button { font-family:inherit; font-size:15px; font-weight:600; border-radius:14px; padding:13px 18px; cursor:pointer; }
-    .primary { background: var(--green); color: white; border:none; }
-    .primary:hover { background: var(--green-hover); }
-    .primary:active { background: var(--green-pressed); transform:scale(.98); }
-    .secondary { background:white; color:var(--text); border:1px solid var(--border); }
-    .secondary:hover { border-color:var(--green); color:var(--green); }
-    .rules { padding: 24px 28px; }
-    .rule-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
-    .rule { background: var(--surface); border:1px solid var(--border-soft); border-radius:16px; padding:14px; }
-    .acc-head { display:flex; justify-content:space-between; align-items:center; padding:24px 28px; cursor:pointer; background:linear-gradient(180deg,#FFFFFF 0%, #F7F8FA 100%); border-bottom:1px solid var(--border-soft); }
-    .acc-head:hover { background:#fff; }
-    .acc-meta { display:flex; align-items:center; gap:8px; }
-    .acc-score { font-size:13px; background:var(--info-bg); border-radius:999px; padding:6px 10px; }
-    .acc-content { display:none; }
-    .open .acc-content { display:block; }
-    .table-wrap{ overflow-x:auto; }
-    table{ width:100%; border-collapse:collapse; background:#fff; }
-    th{ background:var(--surface); color:var(--secondary); font-size:13px; font-weight:600; text-align:left; border-bottom:1px solid var(--border-soft); padding:16px; }
-    td{ padding:16px; border-bottom:1px solid var(--border-soft); vertical-align:top; font-size:15px; }
-    tr:hover td{ background:#FCFDFC; }
-    .crit{ font-weight:600; color:var(--text); display:flex; align-items:center; }
-    .info{ position:relative; display:inline-flex; width:18px; height:18px; border-radius:999px; background:#F7F8FA; border:1px solid #D2D5DA; color:#8F96A4; font-size:12px; font-weight:700; align-items:center; justify-content:center; margin-left:6px; cursor:help; }
-    .info:hover{ background:#EAFBF1; border-color:#00B956; color:#00B956; }
-    .tip{ position:absolute; left:24px; top:-6px; width:290px; background:#fff; border:1px solid #00B956; border-radius:12px; box-shadow:0 8px 20px rgba(43,45,51,.12); padding:10px 12px; font-size:13px; color:#2B2D33; opacity:0; transform:translateY(6px); pointer-events:none; transition:.15s; z-index:40; }
-    .info:hover .tip{ opacity:1; transform:translateY(0); }
-    .summary { padding:28px; }
-    @media print {
-      .buttons { display:none !important; }
-      .sticky { position: static; }
-      .card { box-shadow:none; }
-      .acc-head { cursor: default; }
-      .acc-content { display:block !important; }
-      tr:hover td { background:#fff; }
-      .card { break-inside: avoid; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CX / Product Review Scorecard</title>
+
+<style>
+:root{
+  --green:#00B956;
+  --green-hover:#00A94F;
+  --green-pressed:#009447;
+  --purple:#731982;
+
+  --bg:#F2F4F7;
+  --card:#FFFFFF;
+  --surface:#F7F8FA;
+
+  --border:#D2D5DA;
+  --border-soft:#E6E9EE;
+
+  --text:#2B2D33;
+  --secondary:#8F96A4;
+
+  --success-bg:#EAFBF1;
+  --info-bg:#DDF5FF;
+  --warning-bg:#FFF6E5;
+  --error-bg:#FFF0F0;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:"MegaFon Graphik LC","Inter",Arial,sans-serif;
+  color:var(--text);
+}
+
+.container{
+  max-width:1440px;
+  margin:0 auto;
+  padding:40px 32px 80px;
+}
+
+.hero{
+  background:linear-gradient(135deg,#FFFFFF 0%,#EAFBF1 60%,#DDF5FF 100%);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:40px;
+  box-shadow:0 16px 40px rgba(43,45,51,.08);
+  margin-bottom:24px;
+}
+
+h1{
+  margin:0 0 12px;
+  font-size:44px;
+  line-height:1.05;
+  font-weight:700;
+  letter-spacing:-.03em;
+}
+
+.hero-sub{
+  color:var(--secondary);
+  font-size:17px;
+  margin-bottom:28px;
+}
+
+.hero-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:16px;
+}
+
+input,select,textarea{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:12px 14px;
+  font-size:15px;
+  font-family:inherit;
+  background:#fff;
+  outline:none;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 4px rgba(0,185,86,.12);
+}
+
+textarea{
+  resize:none;
+  min-height:72px;
+  max-height:72px;
+}
+
+.sticky{
+  position:sticky;
+  top:0;
+  z-index:100;
+  margin-bottom:24px;
+}
+
+.score-panel{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:20px 24px;
+  box-shadow:0 10px 28px rgba(43,45,51,.08);
+}
+
+.score-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.score-main{
+  display:flex;
+  gap:24px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.score-value{
+  font-size:36px;
+  font-weight:700;
+}
+
+.badge{
+  padding:8px 14px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:14px;
+}
+
+.progress{
+  width:280px;
+  height:12px;
+  background:var(--surface);
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  width:0;
+  height:100%;
+  background:linear-gradient(90deg,var(--green),#00D2FF);
+}
+
+.btns{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+button{
+  border:none;
+  border-radius:14px;
+  padding:12px 16px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.btn-primary{
+  background:var(--green);
+  color:#fff;
+}
+
+.btn-secondary{
+  background:#fff;
+  border:1px solid var(--border);
+}
+
+.rules{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:24px;
+}
+
+.rule{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:20px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:24px;
+  box-shadow:0 12px 32px rgba(43,45,51,.06);
+  margin-bottom:20px;
+  overflow:hidden;
+}
+
+.block-header{
+  padding:24px 28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+  background:linear-gradient(180deg,#FFFFFF 0%,#F7F8FA 100%);
+}
+
+.block-left h3{
+  margin:0;
+  font-size:22px;
+}
+
+.block-left p{
+  margin:6px 0 0;
+  color:var(--secondary);
+  font-size:14px;
+}
+
+.block-meta{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.block-content{
+  display:none;
+  border-top:1px solid var(--border-soft);
+}
+
+.block-content.open{
+  display:block;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th{
+  background:var(--surface);
+  color:var(--secondary);
+  font-size:13px;
+  text-align:left;
+  padding:14px 16px;
+}
+
+td{
+  padding:16px;
+  border-top:1px solid var(--border-soft);
+  vertical-align:top;
+}
+
+.summary{
+  padding:24px;
+  display:grid;
+  gap:16px;
+}
+
+.zone-red{background:var(--error-bg);}
+.zone-yellow{background:var(--warning-bg);}
+.zone-green{background:var(--success-bg);}
+.zone-platinum{background:var(--info-bg);}
+</style>
 </head>
 <body>
+
 <div class="container">
-  <section class="card hero">
-    <h1>CX / Product Review Scorecard</h1>
-    <div>Онлайн-форма для оценки зрелости клиентского опыта продукта</div>
-    <div class="hero-grid">
-      <div><label>Продукт</label><input id="product"></div>
-      <div><label>Тип ревью</label><select id="reviewType"><option>Запуск продукта</option><option>Квартальное ревью</option><option>Глубокий аудит</option><option>Редизайн сценария</option></select></div>
-      <div><label>Ответственный</label><input id="owner"></div>
-      <div><label>CX Reviewer</label><input id="reviewer"></div>
-      <div><label>Дата ревью</label><input id="reviewDate" type="date"></div>
-    </div>
-  </section>
-  <section class="card sticky">
-    <div class="row">
-      <div class="score" id="totalScore">0%</div><div class="zone" id="zone">Красная зона</div>
-      <div class="progress"><span id="progress"></span></div>
-      <div class="muted">Заполнено: <b id="filled">0</b> из <b id="total">0</b></div>
-      <div class="buttons">
-        <button class="secondary" onclick="resetForm()">Очистить</button><button class="secondary" onclick="window.print()">Печать / PDF</button><button class="secondary" onclick="copySummary()">Скопировать итог</button><button class="primary" onclick="saveForm()">Сохранить</button><button class="primary" onclick="loadForm()">Загрузить</button>
+
+<div class="hero">
+  <h1>CX / Product Review Scorecard</h1>
+  <div class="hero-sub">
+    Онлайн-форма для оценки зрелости клиентского опыта продукта
+  </div>
+
+  <div class="hero-grid">
+    <input id="product" placeholder="Продукт">
+    <select id="reviewType">
+      <option>Запуск продукта</option>
+      <option>Квартальное ревью</option>
+      <option>Глубокий аудит</option>
+      <option>Редизайн сценария</option>
+    </select>
+    <input id="owner" placeholder="Ответственный">
+    <input id="reviewer" placeholder="CX Reviewer">
+    <input id="date" type="date">
+  </div>
+</div>
+
+<div class="sticky">
+  <div class="score-panel">
+    <div class="score-top">
+      <div class="score-main">
+        <div class="score-value" id="totalScore">0%</div>
+        <div class="badge" id="zoneBadge">Не заполнено</div>
+        <div class="progress">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div id="filledMeta">0 / 120 критериев</div>
+      </div>
+
+      <div class="btns">
+        <button class="btn-secondary" onclick="resetForm()">Очистить</button>
+        <button class="btn-secondary" onclick="copySummary()">Скопировать итог</button>
+        <button class="btn-primary" onclick="window.print()">PDF / Печать</button>
       </div>
     </div>
-  </section>
-  <section class="card rules"><h3>Правила оценки</h3><div class="rule-grid"><div class="rule"><b>0 — Нет</b><div class="muted">Критерий отсутствует или не работает.</div></div><div class="rule"><b>1 — Критично</b><div class="muted">Реализовано слабо, фрагментарно или неудобно.</div></div><div class="rule"><b>2 — База</b><div class="muted">Соответствует минимальному стандарту.</div></div><div class="rule"><b>3 — Эталон</b><div class="muted">Сильное решение, можно использовать как пример.</div></div></div></section>
-  <div id="blocks"></div>
-  <section class="card summary"><h2>Итоговое резюме</h2><div class="hero-grid"><div><label>Основные сильные стороны</label><textarea id="strengths"></textarea></div><div><label>Ключевые зоны роста</label><textarea id="growth"></textarea></div><div><label>Критические риски</label><textarea id="risks"></textarea></div><div><label>План улучшений</label><textarea id="plan"></textarea></div><div><label>Решение по итогам ревью</label><select id="decision"><option>Запуск возможен</option><option>Запуск возможен с условиями</option><option>Требуется доработка</option><option>Запуск не рекомендован</option></select></div></div></section>
+  </div>
 </div>
+
+<div class="rules">
+  <div class="rule"><strong>0 — Нет</strong><br>Критерий отсутствует</div>
+  <div class="rule"><strong>1 — Критично</strong><br>Слабая реализация</div>
+  <div class="rule"><strong>2 — База</strong><br>Минимальный стандарт</div>
+  <div class="rule"><strong>3 — Эталон</strong><br>Лучшее решение</div>
+</div>
+
+<div id="blocksContainer"></div>
+
+<div class="card">
+  <div class="summary">
+    <textarea placeholder="Основные сильные стороны"></textarea>
+    <textarea placeholder="Ключевые зоны роста"></textarea>
+    <textarea placeholder="Критические риски"></textarea>
+    <textarea placeholder="План улучшений"></textarea>
+  </div>
+</div>
+
 <script>
 const blocks = [
-{title:"Исследования и обоснование",desc:"Проверяем, насколько продуктовые решения опираются на данные, клиентов, рынок и подтверждённые гипотезы.",items:[{criterion:"Анализ рынка",check:"Актуальный анализ рынка и трендов",bestPractice:"Регулярный обзор рынка и фиксация выводов в продуктовой документации."},{criterion:"Конкурентный анализ",check:"Сравнение с конкурентами по UX и ценности",bestPractice:"Сравнение не только функций, но и UX-сценариев конкурентов."},{criterion:"CustDev / интервью",check:"Регулярность и качество интервью",bestPractice:"Минимум 5–7 интервью на сегмент перед значимой доработкой."},{criterion:"JTBD / персоны",check:"Определены роли и потребности",bestPractice:"Разделять роли ЛПР, администратора, бухгалтера и конечного пользователя."},{criterion:"Проверка гипотез",check:"Валидация решений до разработки",bestPractice:"Проверка спорных решений до разработки через MVP/прототипы."},{criterion:"Анализ текущего CJ",check:"Карта текущего клиентского пути",bestPractice:"Ведение AS IS / TO BE для ключевых сценариев."},{criterion:"Анализ обращений",check:"Использование данных поддержки",bestPractice:"Использовать поддержку как источник продуктовой диагностики."},{criterion:"Аналитика воронки",check:"Анализ потерь по этапам",bestPractice:"Анализировать потери между этапами, а не только общий CR."}]},
-{title:"Коммерческий блок и ценность продукта",desc:"Проверяем понятность ценности и коммерческого предложения.",items:[{criterion:"Ценностное предложение",check:"Ясность формулировки ценности",bestPractice:"Формула: для кого → какая боль → какой результат → почему с нами."},{criterion:"Конкурентные отличия",check:"Понятность уникальных преимуществ",bestPractice:"Показывать отличия в формате сравнений и преимуществ."},{criterion:"Бизнес-кейсы",check:"Наличие реальных кейсов",bestPractice:"Показывать реальные сценарии использования продукта."},{criterion:"Отраслевая специфика",check:"Адаптация предложения по сегментам",bestPractice:"Адаптировать предложение под сегменты и индустрии."},{criterion:"Эффект / выгода",check:"Показ измеримой пользы",bestPractice:"Показывать ROI, экономию, снижение ручного труда."},{criterion:"Прозрачность тарифов",check:"Ясность тарифов и ограничений",bestPractice:"Понятные тарифы, ограничения и условия."},{criterion:"Понятный CTA",check:"Явный следующий шаг",bestPractice:"Один главный следующий шаг на экран."},{criterion:"Доказательства доверия",check:"Наличие trust-элементов",bestPractice:"Отзывы, кейсы, логотипы клиентов, гарантии."},{criterion:"Калькулятор / расчёт",check:"Инструмент предварительного расчёта",bestPractice:"Калькулятор стоимости / конфигуратор."},{criterion:"FAQ до покупки",check:"Закрытие возражений до контакта",bestPractice:"Закрывать частые вопросы до обращения в продажи."}]},
-{title:"Заявка, лиды и продажи",desc:"Проверяем путь от заявки до продажи и передачи в подключение.",items:[{criterion:"SLA первого контакта",check:"Скорость первого ответа",bestPractice:"Быстрый контакт для горячих лидов."},{criterion:"Контроль SLA",check:"Мониторинг соблюдения SLA",bestPractice:"Дашборд просрочек и причин нарушений."},{criterion:"Подтверждение заявки",check:"Подтверждение получения заявки",bestPractice:"Сообщение о принятии заявки и следующих шагах."},{criterion:"Прозрачный статус заявки",check:"Видимость статуса заявки",bestPractice:"Трекер статусов заявки."},{criterion:"Ответственный за заявку",check:"Назначен владелец заявки",bestPractice:"Owner заявки в CRM / очереди."},{criterion:"Бесшовная передача",check:"Целостность данных между этапами",bestPractice:"Клиент не повторяет данные на этапах."},{criterion:"Минимум лишних вопросов",check:"Оптимизированная форма лида",bestPractice:"Короткая форма на старте."},{criterion:"Follow-up",check:"Повторные касания",bestPractice:"Повторные касания по незавершённым заявкам."},{criterion:"Единые статусы",check:"Общий язык статусов",bestPractice:"Общий словарь статусов по всем командам."},{criterion:"Передача в подключение",check:"Чёткий handoff после продажи",bestPractice:"Понятен следующий владелец и срок после продажи."}]},
-{title:"Оформление, договор и документы",desc:"Проверяем простоту юридических и операционных шагов.",items:[{criterion:"Понятный сценарий оформления",check:"Пошаговый путь оформления",bestPractice:"Пошаговый сценарий с прогрессом."},{criterion:"Минимум ручного ввода",check:"Автоматизация ввода",bestPractice:"Автозаполнение и переиспользование данных."},{criterion:"Проверка данных",check:"Валидация данных",bestPractice:"Inline validation."},{criterion:"Прозрачность документов",check:"Ясность документальных требований",bestPractice:"Список документов и требования."},{criterion:"Цифровое подписание",check:"Доступность e-sign",bestPractice:"Максимальный уход от бумаги."},{criterion:"Статус договора / счёта",check:"Трекинг статусов документов",bestPractice:"Видимость статусов документов."},{criterion:"Понятные юридические условия",check:"Понятность условий",bestPractice:"Выжимка условий простым языком."},{criterion:"Черновик оформления",check:"Сохранение прогресса",bestPractice:"Сохранение прогресса."},{criterion:"Исправление ошибок",check:"Прозрачная коррекция ошибок",bestPractice:"Понятная причина отклонения и действие."}]},
-{title:"Онбординг и активация",desc:"Проверяем выход клиента на первую пользу.",items:[{criterion:"Стартовый сценарий",check:"Первый путь пользователя",bestPractice:"Welcome-flow / чек-лист старта."},{criterion:"Welcome-коммуникация",check:"Коммуникация после регистрации",bestPractice:"Письмо / SMS / push со стартом."},{criterion:"Пошаговая настройка",check:"Наличие setup wizard",bestPractice:"Wizard / мастер настройки."},{criterion:"Прогресс настройки",check:"Отображение прогресса",bestPractice:"Progress bar / checklist."},{criterion:"Быстрый выход на пользу",check:"Время до первой ценности",bestPractice:"Сокращение time-to-value."},{criterion:"Подсказки в процессе",check:"Контекстная помощь",bestPractice:"Контекстная помощь."},{criterion:"Шаблоны и преднастройки",check:"Готовые стартовые сценарии",bestPractice:"Готовые конфигурации / шаблоны."},{criterion:"Пустые состояния",check:"Понятные empty states",bestPractice:"Пустой экран ведёт к действию."},{criterion:"Ролевой онбординг",check:"Разные onboarding-пути",bestPractice:"Разные сценарии по ролям."},{criterion:"Контроль активации",check:"Метрики completion",bestPractice:"Измерение completion rate."}]},
-{title:"Самообслуживание",desc:"Проверяем возможность управлять продуктом без поддержки.",items:[{criterion:"Базовые операции без поддержки",check:"Self-service доступен",bestPractice:"Максимум действий в self-service."},{criterion:"Управление настройками",check:"Самостоятельная настройка",bestPractice:"Самостоятельное изменение параметров."},{criterion:"Управление пользователями",check:"Управление аккаунтами",bestPractice:"CRUD пользователей / приглашения."},{criterion:"Роли и доступы",check:"Ролевая модель",bestPractice:"Готовая ролевая модель."},{criterion:"Документы и финансы",check:"Доступ к финансовым данным",bestPractice:"Онлайн-доступ к финансам."},{criterion:"История действий",check:"Логи операций",bestPractice:"Audit log."},{criterion:"Массовые действия",check:"Batch операции",bestPractice:"Bulk operations."},{criterion:"Шаблоны",check:"Повторное использование конфигураций",bestPractice:"Сохранение типовых настроек."},{criterion:"Самодиагностика",check:"Встроенная диагностика",bestPractice:"Проверка статуса / troubleshooting."},{criterion:"Прозрачное отключение",check:"Ясный offboarding",bestPractice:"Понятный offboarding / отключение."}]},
-{title:"Поддержка и помощь",desc:"Проверяем качество сервисной поддержки.",items:[{criterion:"Доступный канал поддержки",check:"Поддержка в нужных точках",bestPractice:"Поддержка доступна в релевантных точках."},{criterion:"Чат / цифровой канал",check:"Удобство цифрового обращения",bestPractice:"Чат / бот / заявка."},{criterion:"Понятный срок ответа",check:"Прозрачность SLA",bestPractice:"Показан SLA обращения."},{criterion:"Контекст обращения",check:"Передача контекста обращения",bestPractice:"Передача контекста обращения."},{criterion:"База знаний",check:"Актуальность KB",bestPractice:"Актуальная knowledge base."},{criterion:"Встроенная помощь",check:"Наличие embedded help",bestPractice:"Embedded help."},{criterion:"Эскалация",check:"Процедура эскалации",bestPractice:"Понятный путь эскалации."},{criterion:"Закрытие обращения",check:"Подтверждение решения",bestPractice:"Подтверждение решения."},{criterion:"Оценка поддержки",check:"Сбор CSAT",bestPractice:"CSAT после обращения."},{criterion:"Проактивная поддержка",check:"Предотвращение проблем",bestPractice:"Предупреждение проблем заранее."}]},
-{title:"Интерфейс и эвристики UX/UI",desc:"Проверяем удобство и соответствие UX-стандартам.",items:[{criterion:"Видимость статуса",check:"Понятные статусы",bestPractice:"Прогресс / статусы / результаты."},{criterion:"Понятный язык",check:"Язык пользователя",bestPractice:"Язык клиента, не внутренние термины."},{criterion:"Контроль и свобода",check:"Возможность отката/редактирования",bestPractice:"Undo / Back / Edit."},{criterion:"Единообразие",check:"Консистентность интерфейса",bestPractice:"Консистентность интерфейса."},{criterion:"Предотвращение ошибок",check:"Превентивные механики",bestPractice:"Error prevention."},{criterion:"Узнавание вместо запоминания",check:"Контекстность UI",bestPractice:"Нужный контекст на экране."},{criterion:"Быстрые действия",check:"Ускорители в UX",bestPractice:"Shortcuts / bulk / templates."},{criterion:"Минимум визуального шума",check:"Чистая визуальная иерархия",bestPractice:"Visual hierarchy / progressive disclosure."},{criterion:"Понятные ошибки",check:"Тексты ошибок с действием",bestPractice:"Ошибка объясняет проблему и действие."},{criterion:"Помощь и документация",check:"Доступность help",bestPractice:"Help там, где нужен."},{criterion:"Соответствие дизайн-системе",check:"Единая система компонентов",bestPractice:"Использование design system."},{criterion:"Читаемость и доступность",check:"Контраст и доступность",bestPractice:"Контраст / размер / tap zones."},{criterion:"Состояния компонентов",check:"Проработанность состояний",bestPractice:"Все UI-states спроектированы."},{criterion:"Адаптивность",check:"Работа на целевых устройствах",bestPractice:"Корректная работа на целевых устройствах."}]},
-{title:"Формы и ввод данных",desc:"Проверяем удобство заполнения данных.",items:[{criterion:"Минимум полей",check:"Оптимизация объема ввода",bestPractice:"Только необходимые поля."},{criterion:"Логичная группировка",check:"Группировка полей",bestPractice:"Поля сгруппированы по смыслу."},{criterion:"Понятные названия",check:"Ясные labels",bestPractice:"Ясные label без внутренней терминологии."},{criterion:"Подсказки",check:"Превентивные подсказки",bestPractice:"Подсказки до ошибки."},{criterion:"Валидация до отправки",check:"Inline validation",bestPractice:"Inline validation."},{criterion:"Маски и автозаполнение",check:"Ускорение ввода",bestPractice:"Input masks / autofill."},{criterion:"Сохранение данных",check:"Draft/autosave",bestPractice:"Draft / autosave."},{criterion:"Понятные ошибки",check:"Понятность ошибок формы",bestPractice:"Конкретное описание ошибки."},{criterion:"Согласия и безопасность",check:"Прозрачность согласий",bestPractice:"Прозрачная юридическая логика."}]},
-{title:"Коммуникации и уведомления",desc:"Проверяем клиентские уведомления.",items:[{criterion:"Подтверждение действий",check:"Подтверждения критичных действий",bestPractice:"Подтверждать важные действия."},{criterion:"Уведомления о статусах",check:"Статусные коммуникации",bestPractice:"Статусные сообщения по этапам."},{criterion:"Понятный текст сообщений",check:"Ясность текстов",bestPractice:"Что произошло → что делать → срок."},{criterion:"Правильный канал",check:"Канал по приоритету",bestPractice:"Выбор канала под критичность."},{criterion:"Нет лишнего шума",check:"Частота коммуникаций",bestPractice:"Контроль частоты коммуникаций."},{criterion:"История коммуникаций",check:"Лог уведомлений",bestPractice:"Журнал уведомлений."},{criterion:"Триггерные сообщения",check:"Event-based логика",bestPractice:"Event-based коммуникации."},{criterion:"Коммуникации после запуска",check:"Поддержка после старта",bestPractice:"Первые 7–14 дней сопровождения."}]},
-{title:"Аналитика и метрики",desc:"Проверяем измеримость продукта.",items:[{criterion:"Ключевые метрики определены",check:"Определена metric tree",bestPractice:"Есть metric tree."},{criterion:"Сбор данных настроен",check:"Корректный data collection",bestPractice:"Метрики реально собираются."},{criterion:"Воронка заявки / подключения",check:"Измеряемость funnel",bestPractice:"Lead-to-activation funnel."},{criterion:"Метрики онбординга",check:"Измерение onboarding",bestPractice:"Completion / TTV / drop-off."},{criterion:"Метрики использования",check:"Usage метрики",bestPractice:"Usage / DAU / depth."},{criterion:"Метрики поддержки",check:"Support метрики",bestPractice:"Support analytics."},{criterion:"Причины отказов",check:"Фиксация loss reasons",bestPractice:"Loss reasons tracking."},{criterion:"Регулярный разбор",check:"Ритм review метрик",bestPractice:"Регулярный review метрик."},{criterion:"Ответственный за метрики",check:"Назначен owner данных",bestPractice:"Есть owner данных."},{criterion:"Оценка эффекта изменений",check:"Post-release impact",bestPractice:"Impact review after release."}]},
-{title:"Удержание и развитие клиента",desc:"Проверяем работу с удержанием и развитием клиента.",items:[{criterion:"Сигналы риска оттока",check:"Раннее выявление churn",bestPractice:"Health score / churn signals."},{criterion:"Сценарии удержания",check:"Retention playbook",bestPractice:"Retention playbook."},{criterion:"Повторное вовлечение",check:"Re-engagement механики",bestPractice:"Re-engagement сценарии."},{criterion:"Расширение использования",check:"Expansion/upsell сценарии",bestPractice:"Upsell / expansion сценарии."},{criterion:"Обучение новым возможностям",check:"Коммуникации о новых фичах",bestPractice:"Release notes / education."},{criterion:"Обратная связь",check:"Системный сбор feedback",bestPractice:"CSAT / CES / NPS / feedback form."}]},
-{title:"Готовность запуска и управление качеством",desc:"Проверяем готовность продукта к запуску.",items:[{criterion:"Целевой CJ задокументирован",check:"TO BE CJ готов",bestPractice:"TO BE CJ / blueprint обязателен."},{criterion:"Роли и ответственность",check:"RACI и owners определены",bestPractice:"RACI / owner map."},{criterion:"Участники согласованы",check:"Согласование стейкхолдеров",bestPractice:"Stakeholder alignment."},{criterion:"Нестандартные сценарии",check:"Обработаны edge-cases",bestPractice:"Edge-case / fallback карта."},{criterion:"Готовность поддержки",check:"Support readiness",bestPractice:"Support readiness checklist."},{criterion:"Готовность продаж",check:"Sales enablement",bestPractice:"Sales enablement kit."},{criterion:"Готовность коммуникаций",check:"Communication readiness",bestPractice:"Communication map."},{criterion:"План мониторинга после запуска",check:"Post-launch monitoring",bestPractice:"Launch monitoring plan."},{criterion:"Критерии успешного запуска",check:"Launch success criteria",bestPractice:"Success criteria defined."},{criterion:"План быстрых исправлений",check:"Fast-fix ready",bestPractice:"Fast-fix backlog."}]}];
 
-function getZone(score){if(score<=40)return{t:'Красная зона',bg:'#FFF0F0',c:'#B42318'};if(score<=70)return{t:'Жёлтая зона',bg:'#FFF6E5',c:'#B76E00'};if(score<=90)return{t:'Зелёная зона',bg:'#EAFBF1',c:'#067A3D'};return{t:'Эталонная зона',bg:'#DDF5FF',c:'#731982'};}
-function renderBlocks(){const root=document.getElementById('blocks');root.innerHTML='';blocks.forEach((b,bi)=>{const el=document.createElement('section');el.className='card '+(bi===0?'open':'');el.dataset.block=bi;el.innerHTML=`<div class="acc-head" onclick="toggleBlock(${bi})"><div><h3>${b.title}</h3><div class="muted">${b.desc}</div></div><div class="acc-meta"><span class="acc-score" id="bscore-${bi}">0%</span><span class="muted" id="bfilled-${bi}">0/${b.items.length}</span><span class="muted" id="chev-${bi}">${bi===0?'▲':'▼'}</span></div></div><div class="acc-content"><div class="table-wrap"><table><thead><tr><th>Критерий</th><th>Что проверяем</th><th>Оценка</th><th>Комментарий</th></tr></thead><tbody>${b.items.map((it,ii)=>`<tr><td class="crit">${it.criterion}<span class="info">i<span class="tip">${it.bestPractice}</span></span></td><td>${it.check}</td><td><select data-b="${bi}" data-i="${ii}" data-type="rate"><option value="">—</option><option value="0">0 — Нет</option><option value="1">1 — Критично</option><option value="2">2 — База</option><option value="3">3 — Эталон</option></select></td><td><textarea data-b="${bi}" data-i="${ii}" data-type="comment"></textarea></td></tr>`).join('')}</tbody></table></div></div>`;root.appendChild(el);});document.getElementById('total').textContent=blocks.reduce((a,b)=>a+b.items.length,0);root.addEventListener('input',calculateScore);root.addEventListener('change',calculateScore);}
-function calculateBlockScore(blockIndex){let s=0,c=0;document.querySelectorAll(`[data-type="rate"][data-b="${blockIndex}"]`).forEach(x=>{if(x.value!==''){s+=Number(x.value);c++;}});const p=c?Math.round((s/c/3)*100):0;document.getElementById(`bscore-${blockIndex}`).textContent=`${p}%`;document.getElementById(`bfilled-${blockIndex}`).textContent=`${c}/${blocks[blockIndex].items.length}`;return{p,c};}
-function calculateScore(){let s=0,c=0;blocks.forEach((_,i)=>{document.querySelectorAll(`[data-type="rate"][data-b="${i}"]`).forEach(x=>{if(x.value!==''){s+=Number(x.value);c++;}});calculateBlockScore(i);});const p=c?Math.round((s/c/3)*100):0;document.getElementById('totalScore').textContent=`${p}%`;document.getElementById('filled').textContent=c;document.getElementById('progress').style.width=p+'%';const z=getZone(p);const zone=document.getElementById('zone');zone.textContent=z.t;zone.style.background=z.bg;zone.style.color=z.c;}
-function toggleBlock(blockIndex){const card=document.querySelector(`section[data-block="${blockIndex}"]`);card.classList.toggle('open');document.getElementById(`chev-${blockIndex}`).textContent=card.classList.contains('open')?'▲':'▼';}
-function saveForm(){const d={hero:{product:product.value,reviewType:reviewType.value,owner:owner.value,reviewer:reviewer.value,reviewDate:reviewDate.value},rates:{},comments:{},summary:{strengths:strengths.value,growth:growth.value,risks:risks.value,plan:plan.value,decision:decision.value},open:[...document.querySelectorAll('section[data-block]')].map(x=>x.classList.contains('open'))};document.querySelectorAll('[data-type="rate"]').forEach(x=>d.rates[`${x.dataset.b}-${x.dataset.i}`]=x.value);document.querySelectorAll('[data-type="comment"]').forEach(x=>d.comments[`${x.dataset.b}-${x.dataset.i}`]=x.value);localStorage.setItem('cxScorecard',JSON.stringify(d));alert('Сохранено');}
-function loadForm(){const raw=localStorage.getItem('cxScorecard');if(!raw)return alert('Нет сохранения');const d=JSON.parse(raw);Object.entries(d.hero||{}).forEach(([k,v])=>document.getElementById(k).value=v||'');Object.entries(d.summary||{}).forEach(([k,v])=>document.getElementById(k).value=v||'');Object.entries(d.rates||{}).forEach(([k,v])=>{const [b,i]=k.split('-');const el=document.querySelector(`[data-type="rate"][data-b="${b}"][data-i="${i}"]`);if(el)el.value=v;});Object.entries(d.comments||{}).forEach(([k,v])=>{const [b,i]=k.split('-');const el=document.querySelector(`[data-type="comment"][data-b="${b}"][data-i="${i}"]`);if(el)el.value=v;});(d.open||[]).forEach((v,i)=>{const card=document.querySelector(`section[data-block="${i}"]`);if(card){card.classList.toggle('open',v);document.getElementById(`chev-${i}`).textContent=v?'▲':'▼';}});calculateScore();}
-function resetForm(){if(!confirm('Очистить форму?'))return;document.querySelectorAll('input,textarea').forEach(x=>x.value='');document.querySelectorAll('select').forEach(x=>x.selectedIndex=0);document.querySelectorAll('section[data-block]').forEach((x,i)=>{x.classList.toggle('open',i===0);document.getElementById(`chev-${i}`).textContent=i===0?'▲':'▼';});calculateScore();}
-function copySummary(){const t=`CX / Product Review Summary\n\nПродукт: ${product.value}\nТип ревью: ${reviewType.value}\nДата ревью: ${reviewDate.value}\nИтоговая оценка: ${totalScore.textContent}\nЗона качества: ${zone.textContent}\nЗаполнено критериев: ${filled.textContent} из ${total.textContent}\nРешение: ${decision.value}`;navigator.clipboard.writeText(t).then(()=>alert('Итог скопирован'));}
-renderBlocks();calculateScore();
+{
+title:"Исследования и обоснование",
+desc:"Проверяем, насколько продуктовые решения опираются на данные, рынок и подтверждённые гипотезы.",
+items:[
+["Анализ рынка","Есть актуальные данные по рынку, трендам, динамике спроса и ожиданиям клиентов."],
+["Конкурентный анализ","Есть сравнение конкурентов по функциям, цене, условиям, UX, поддержке и сильным сторонам."],
+["CustDev / интервью","Проведены интервью с клиентами или пользователями, боли подтверждены фактами."],
+["JTBD / роли клиентов","Определены задачи клиента и роли в сценарии: ЛПР, администратор, бухгалтер, пользователь."],
+["Проверка гипотез","Ключевые гипотезы проверены до разработки через прототипы, MVP, интервью или тесты."],
+["Анализ текущего CJ","Для существующего продукта описан текущий путь клиента, боли, разрывы и узкие места."],
+["Анализ обращений и жалоб","Изучены обращения в поддержку, жалобы, причины отказов и повторные проблемы."],
+["Аналитика воронки","Есть данные по этапам: визиты, заявки, контакт, КП, договор, подключение, активация."]
+]
+},
+
+{
+title:"Коммерческая упаковка и ценность",
+desc:"Проверяем, насколько клиент понимает ценность продукта, отличие от альтернатив и следующий шаг.",
+items:[
+["Ценностное предложение","Клиент быстро понимает, что это за продукт, для кого он и какую проблему решает."],
+["Конкурентные отличия","Показано, чем продукт лучше альтернатив: скорость, цена, надёжность, удобство, поддержка, интеграции."],
+["Бизнес-кейсы","Описаны конкретные задачи клиента, которые решает продукт, с примерами реального применения."],
+["Отраслевая специфика","Предложение адаптировано под разные сегменты, отрасли или типы B2B-клиентов."],
+["Эффект / выгода","Понятно, что получает клиент: экономия времени, денег, снижение рисков, рост продаж или удобство."],
+["Прозрачность тарифов","Стоимость, условия подключения, ограничения, скрытые платежи и условия отключения понятны заранее."],
+["Понятный целевой шаг","Клиент понимает, что делать дальше: оставить заявку, подключить, получить расчёт или консультацию."],
+["Доказательства доверия","Есть кейсы, цифры, отзывы, сертификаты, SLA, логотипы клиентов, гарантии или примеры внедрения."]
+]
+},
+
+{
+title:"Заявка, лиды и продажи",
+desc:"Проверяем путь от интереса клиента до обработки заявки, продажи и передачи в подключение.",
+items:[
+["SLA первого контакта","Определён норматив, за сколько времени клиент должен получить первый ответ после заявки."],
+["Контроль SLA","SLA реально измеряется: есть отчётность, контроль просрочек и причины нарушений."],
+["Подтверждение заявки","После отправки заявки клиент сразу получает подтверждение, что заявка принята."],
+["Прозрачный статус заявки","Клиент понимает, на каком этапе находится заявка и что будет дальше."],
+["Ответственный за заявку","Понятно, кто отвечает за доведение заявки до результата."],
+["Бесшовная передача","Данные клиента не теряются между сайтом, CRM, продажами, подключением и поддержкой."],
+["Минимум лишних вопросов","У клиента не запрашивают лишние данные до момента, когда они действительно нужны."],
+["Передача в подключение","После продажи клиент не попадает в «чёрную дыру»; следующий этап понятен и управляем."]
+]
+},
+
+{
+title:"Оформление, договор и документы",
+desc:"Проверяем, насколько просто клиенту пройти юридические и операционные шаги.",
+items:[
+["Понятный сценарий оформления","Клиент понимает все шаги до подключения: заявка, проверка, договор, оплата, активация."],
+["Минимум ручного ввода","Используются автозаполнение, данные из профиля, подсказки, маски и повторное использование данных."],
+["Проверка данных","Ошибки в ИНН, телефоне, email, адресе и документах выявляются до финальной отправки."],
+["Прозрачность документов","Клиент понимает, какие документы нужны, зачем они нужны и в каком формате их загрузить."],
+["Цифровое подписание","Где возможно, реализовано онлайн-подписание: ЭДО, УКЭП, простая электронная подпись, ЛК."],
+["Статус договора / счёта","Клиент видит статусы: договор сформирован, счёт выставлен, ожидается оплата, подписано."],
+["Понятные юридические условия","Рядом с полным текстом есть краткое объяснение ключевых условий человеческим языком."],
+["Исправление ошибок","Если документ или данные не подходят, клиент понимает причину и способ исправления."]
+]
+},
+
+{
+title:"Онбординг и активация",
+desc:"Проверяем, насколько быстро клиент начинает пользоваться продуктом и получает первую пользу.",
+items:[
+["Стартовый сценарий","После подключения клиент понимает, с чего начать."],
+["Welcome-коммуникация","Клиент получает приветственное сообщение с понятными первыми действиями."],
+["Пошаговая настройка","Сложный продукт разбит на понятные этапы настройки."],
+["Прогресс настройки","Клиент видит, сколько шагов уже выполнено и что осталось."],
+["Быстрый выход на пользу","Клиент быстро получает первый полезный результат от продукта."],
+["Подсказки в процессе","В сложных местах есть пояснения, примеры, подсказки и расшифровки терминов."],
+["Пустые состояния","Если данных ещё нет, экран объясняет, что делать дальше, а не выглядит пустым тупиком."],
+["Контроль активации","Измеряется, завершил ли клиент ключевые шаги и начал ли использовать продукт."]
+]
+},
+
+{
+title:"Самообслуживание",
+desc:"Проверяем, может ли клиент управлять продуктом без лишних обращений к менеджеру или в поддержку.",
+items:[
+["Базовые операции без поддержки","Клиент может сам выполнить основные действия без менеджера или оператора."],
+["Управление настройками","Клиент может самостоятельно менять параметры продукта."],
+["Управление пользователями","Можно добавлять, удалять и редактировать пользователей."],
+["Роли и доступы","Есть понятные роли, права, уровни доступа и ограничения."],
+["Документы и финансы","Счета, акты, оплаты, детализация и закрывающие документы доступны онлайн."],
+["История действий","Клиент видит, кто, когда и что изменил."],
+["Массовые действия","Для B2B-сценариев доступны массовые операции: загрузка пользователей, номеров, адресов, объектов."],
+["Самодиагностика","Клиент может сам понять причину проблемы или проверить статус услуги."]
+]
+},
+
+{
+title:"Поддержка и помощь",
+desc:"Проверяем доступность, контекстность и качество поддержки.",
+items:[
+["Доступный канал поддержки","Клиент легко находит, куда обратиться за помощью."],
+["Чат / цифровой канал","Есть быстрый цифровой канал: чат, форма обращения, бот или заявка."],
+["Понятный срок ответа","Клиент понимает, когда ждать ответ или решение."],
+["Контекст обращения","Поддержка видит продукт, клиента, историю, ошибку и не заставляет повторять данные."],
+["База знаний","Есть актуальные инструкции, FAQ, статьи и поиск по помощи."],
+["Встроенная помощь","Подсказки и помощь доступны прямо в интерфейсе в момент возникновения вопроса."],
+["Эскалация","Для сложных вопросов есть понятный путь передачи специалисту."],
+["Оценка поддержки","Собираются CSAT, оценка обращения или причины низких оценок."]
+]
+},
+
+{
+title:"Интерфейс и эвристики UX/UI",
+desc:"Проверяем удобство, понятность, консистентность и соответствие дизайн-системе.",
+items:[
+["Видимость статуса","Пользователь всегда понимает, что делает система: загрузка, прогресс, успех, ошибка, статус."],
+["Понятный язык","Используется язык клиента, а не внутренние термины компании."],
+["Контроль и свобода","Можно отменить действие, вернуться назад, исправить данные или выйти из процесса."],
+["Единообразие","Кнопки, статусы, цвета, термины и паттерны используются одинаково во всём продукте."],
+["Предотвращение ошибок","Интерфейс заранее помогает не ошибиться: маски, проверки, ограничения, предупреждения."],
+["Минимум визуального шума","Экран не перегружен; главное действие и важная информация хорошо выделены."],
+["Понятные ошибки","Ошибка объясняет, что случилось, почему и что нужно сделать дальше."],
+["Соответствие дизайн-системе","Используются актуальные компоненты, типографика, цвета, сетки и состояния элементов."]
+]
+},
+
+{
+title:"Формы и ввод данных",
+desc:"Проверяем, насколько легко клиенту заполнять данные без ошибок и потери прогресса.",
+items:[
+["Минимум полей","Запрашиваются только действительно необходимые данные."],
+["Логичная группировка","Поля сгруппированы по смыслу и идут в естественной последовательности."],
+["Понятные названия","Клиент понимает, что именно нужно указать в каждом поле."],
+["Подсказки","Для сложных полей есть примеры, формат и пояснения."],
+["Валидация до отправки","Ошибки показываются до отправки формы."],
+["Маски и автозаполнение","Используются маски телефона, ИНН, КПП, email, адреса и даты."],
+["Сохранение данных","Данные не теряются при ошибке, обновлении страницы или возврате назад."],
+["Понятные ошибки в форме","Текст ошибки помогает исправить конкретное поле."]
+]
+},
+
+{
+title:"Коммуникации и уведомления",
+desc:"Проверяем, получает ли клиент своевременные, понятные и полезные сообщения.",
+items:[
+["Подтверждение действий","Клиент получает подтверждение после заявки, оплаты, подключения или изменения настроек."],
+["Уведомления о статусах","Клиент получает обновления по заявке, договору, оплате, подключению, доставке или обращению."],
+["Понятный текст сообщений","Сообщение объясняет, что произошло, что делать дальше и куда обратиться."],
+["Правильный канал","Важные события отправляются в подходящий канал: SMS, email, ЛК, push или звонок."],
+["Нет лишнего шума","Коммуникации не дублируются, не раздражают и не создают информационный шум."],
+["История коммуникаций","Клиент может посмотреть историю уведомлений, событий и обращений."],
+["Триггерные сообщения","Уведомления запускаются по событиям: незавершённая настройка, ошибка оплаты, риск отключения."],
+["Коммуникации после запуска","Есть сопровождение клиента в первые дни или недели после подключения."]
+]
+},
+  
+{
+title:"Аналитика и метрики",
+desc:"Проверяем, есть ли данные для управления продуктом, сценарием и улучшениями.",
+items:[
+["Ключевые метрики определены","Есть набор метрик по воронке, активации, использованию, поддержке и удержанию."],
+["Сбор данных настроен","Метрики реально собираются, а не существуют только в презентации."],
+["Воронка заявки / подключения","Видны этапы: визит, заявка, контакт, КП, договор, подключение, активация."],
+["Метрики онбординга","Измеряются завершение настройки, время до первой пользы и отвал на шагах."],
+["Метрики использования","Видно, пользуется ли клиент продуктом и какие ключевые действия совершает."],
+["Метрики поддержки","Видны обращения, темы, SLA, повторные обращения и удовлетворённость."],
+["Причины отказов","Фиксируются причины потерь, отказов и незавершённых заявок."],
+["Оценка эффекта изменений","После доработок оценивается эффект: было / стало, конверсия, обращения, активация."]
+]
+},
+
+{
+title:"Удержание и развитие клиента",
+desc:"Проверяем, есть ли работа с рисками оттока, повторным вовлечением и развитием клиента.",
+items:[
+["Сигналы риска оттока","Есть признаки риска: снижение использования, жалобы, неоплата, ошибки, незавершённая настройка."],
+["Сценарии удержания","Есть действия при риске ухода: помощь, коммуникация, спецусловия, контакт менеджера."],
+["Повторное вовлечение","Есть сценарии возврата клиента к использованию продукта."],
+["Расширение использования","Есть релевантные предложения дополнительных функций или сценариев."],
+["Обучение новым возможностям","Клиент узнаёт о новых функциях через понятные коммуникации и инструкции."],
+["Обратная связь","Клиент может оставить отзыв, оценку, предложение или жалобу."],
+["Мониторинг здоровья клиента","Есть агрегированный индикатор состояния клиента или риска деградации опыта."],
+["План развития использования","Есть сценарии, которые помогают клиенту использовать продукт глубже и регулярнее."]
+]
+},
+
+{
+title:"Готовность запуска и управление качеством",
+desc:"Проверяем, готов ли продукт и все участники процесса к качественному запуску.",
+items:[
+["Целевой CJ задокументирован","Есть TO BE CJ, blueprint или схема end-to-end сценария."],
+["Роли и ответственность","Понятно, кто отвечает за каждый этап процесса."],
+["Участники согласованы","Продажи, поддержка, юристы, IT, операции и другие участники понимают свою роль."],
+["Нестандартные сценарии","Проработаны ошибки, отказы, задержки, спорные ситуации и ручные обходы."],
+["Готовность поддержки","Поддержка обучена, есть скрипты, база знаний и маршруты обращений."],
+["Готовность продаж","Продажи знают продукт, аргументы, ограничения, материалы и сценарий работы с клиентом."],
+["План мониторинга после запуска","Понятно, какие метрики смотреть в первые дни или недели после запуска."],
+["Критерии успешного запуска","Определено, по каким показателям запуск считается успешным."]
+]
+},
+  
+{
+title:"Безопасность и соответствие требованиям",
+desc:"Проверяем управляемость доступа, безопасность данных и контроль критичных действий.",
+items:[
+["Права доступа","Права пользователей настроены по ролям и не дают лишних полномочий."],
+["Защита данных","Сценарии работы с данными соответствуют требованиям безопасности."],
+["Прозрачные согласия","Пользователь понимает, на что даёт согласие и где посмотреть условия."],
+["Логирование действий","Критичные действия фиксируются в журнале событий."],
+["Подтверждение критичных действий","Опасные действия требуют подтверждения."],
+["Доступ к документам","Документы доступны только релевантным пользователям."],
+["Сценарий потери доступа","Понятно, как восстановить доступ / сменить администратора."],
+["Безопасное изменение настроек","При изменении критичных параметров есть предупреждения и проверки."]
+]
+},
+{
+title:"Операционная и портфельная зрелость",
+desc:"Проверяем готовность внутренних процессов и масштабируемость решения.",
+items:[
+["Готовность операционного процесса","Описан внутренний процесс исполнения после продажи / заявки."],
+["Сроки исполнения","Понятны сроки подключения, доставки, настройки и активации."],
+["Ответственные команды","Понятно, какая команда отвечает за каждый этап."],
+["Контроль статусов внутри процесса","Внутренние статусы синхронизированы с клиентскими."],
+["Масштабируемость сценария","Сценарий выдерживает рост количества клиентов / пользователей."],
+["Переиспользуемость решений","Лучшие практики можно использовать в других продуктах."],
+["Единая логика портфеля","Опыт согласован с другими продуктами компании."],
+["Вклад в CX-стратегию","Продукт усиливает общую CX-стратегию, а не живёт отдельно."]
+]
+}
+];
+
+function renderBlocks(){
+  const container=document.getElementById('blocksContainer');
+  container.innerHTML='';
+
+  blocks.forEach((block,bIndex)=>{
+    container.innerHTML += `
+      <div class="card">
+        <div class="block-header" onclick="toggleBlock(${bIndex})">
+          <div class="block-left">
+            <h3>${bIndex+1}. ${block.title}</h3>
+            <p>${block.desc}</p>
+          </div>
+          <div class="block-meta">
+            <div id="blockFilled-${bIndex}">0 / ${block.items.length}</div>
+            <div id="blockScore-${bIndex}">0%</div>
+          </div>
+        </div>
+
+        <div class="block-content ${bIndex===0 ? 'open' : ''}" id="content-${bIndex}">
+          <table>
+            <thead>
+              <tr>
+                <th>Критерий</th>
+                <th>Что проверяем</th>
+                <th>Оценка</th>
+                <th>Комментарий</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${block.items.map(item=>`
+                <tr>
+                  <td><strong>${item[0]}</strong></td>
+                  <td>${item[1]}</td>
+                  <td>
+                    <select onchange="calculateScore()">
+                      <option value="">—</option>
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                    </select>
+                  </td>
+                  <td>
+                    <textarea placeholder="Комментарий / рекомендация"></textarea>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function toggleBlock(i){
+  const content=document.getElementById(`content-${i}`);
+  content.classList.toggle('open');
+}
+
+function calculateScore(){
+  const selects=[...document.querySelectorAll('tbody select')];
+  const filled=selects.filter(s=>s.value!=="");
+  const total=filled.reduce((sum,s)=>sum+Number(s.value),0);
+
+  const percent=filled.length
+    ? Math.round((total/(filled.length*3))*100)
+    : 0;
+
+  document.getElementById('totalScore').textContent=percent+'%';
+  document.getElementById('progressFill').style.width=percent+'%';
+  document.getElementById('filledMeta').textContent=
+    `${filled.length} / ${selects.length} критериев`;
+
+  const zone=document.getElementById('zoneBadge');
+  zone.className='badge';
+
+  if(percent<=40){
+    zone.textContent='Красная зона';
+    zone.classList.add('zone-red');
+  }else if(percent<=70){
+    zone.textContent='Жёлтая зона';
+    zone.classList.add('zone-yellow');
+  }else if(percent<=90){
+    zone.textContent='Зелёная зона';
+    zone.classList.add('zone-green');
+  }else{
+    zone.textContent='Эталонная зона';
+    zone.classList.add('zone-platinum');
+  }
+
+  updateBlockScores();
+}
+
+function updateBlockScores(){
+  blocks.forEach((block,index)=>{
+    const content=document.getElementById(`content-${index}`);
+    const selects=[...content.querySelectorAll('select')];
+
+    const filled=selects.filter(s=>s.value!=="");
+    const total=filled.reduce((sum,s)=>sum+Number(s.value),0);
+
+    const percent=filled.length
+      ? Math.round((total/(filled.length*3))*100)
+      : 0;
+
+    document.getElementById(`blockScore-${index}`).textContent=percent+'%';
+    document.getElementById(`blockFilled-${index}`).textContent=
+      `${filled.length} / ${selects.length}`;
+  });
+}
+
+function resetForm(){
+  if(!confirm('Очистить форму?')) return;
+
+  document.querySelectorAll('select').forEach(s=>s.value='');
+  document.querySelectorAll('textarea').forEach(t=>t.value='');
+  document.querySelectorAll('input').forEach(i=>i.value='');
+
+  calculateScore();
+}
+
+function copySummary(){
+  const text = `
+CX / Product Review Summary
+
+Продукт: ${document.getElementById('product').value}
+Тип ревью: ${document.getElementById('reviewType').value}
+Ответственный: ${document.getElementById('owner').value}
+CX Reviewer: ${document.getElementById('reviewer').value}
+Дата: ${document.getElementById('date').value}
+
+Итоговая оценка: ${document.getElementById('totalScore').textContent}
+Зона качества: ${document.getElementById('zoneBadge').textContent}
+${document.getElementById('filledMeta').textContent}
+  `.trim();
+
+  navigator.clipboard.writeText(text);
+  alert('Итог скопирован');
+}
+
+renderBlocks();
+calculateScore();
 </script>
+
 </body>
 </html>
+ 
