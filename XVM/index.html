@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Experience Value Model (XVM)</title>
+
   <style>
     :root {
       --green: #00B956;
@@ -15,13 +16,11 @@
       --text: #1B1F27;
       --white: #FFFFFF;
       --danger: #D92D20;
-      --success: #00B956;
       --gradient: linear-gradient(90deg, #00B956 0%, #00D2FF 100%);
       --shadow: 0 10px 30px rgba(19, 27, 45, 0.06);
       --radius-xl: 24px;
       --radius-lg: 18px;
       --radius-md: 14px;
-      --radius-sm: 10px;
     }
 
     * {
@@ -65,10 +64,6 @@
       text-align: center;
     }
 
-    .page-title .icon {
-      font-size: 24px;
-    }
-
     .card {
       background: var(--white);
       border: 1px solid rgba(210, 213, 218, 0.7);
@@ -103,16 +98,19 @@
     }
 
     .grid-3,
-    .grid-4,
-    .grid-5 {
+    .grid-4 {
       display: grid;
       gap: 18px;
       margin-bottom: 18px;
     }
 
-    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .grid-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
 
     .field {
       display: flex;
@@ -129,8 +127,7 @@
       font-family: "MegaFon Graphik LC Medium", sans-serif;
     }
 
-    input[type="text"],
-    input[type="number"],
+    input,
     select {
       width: 100%;
       border: 1px solid transparent;
@@ -246,28 +243,24 @@
       font-family: "MegaFon Graphik LC Medium", sans-serif;
     }
 
-    tbody tr.row-card td {
+    tbody td {
       background: var(--white);
       padding: 8px 10px 14px;
       vertical-align: middle;
       border-bottom: 1px solid #eef1f4;
     }
 
-    tbody tr.row-card:last-child td {
-      border-bottom: none;
-    }
-
     .cell-input input,
     .cell-input select {
       min-height: 50px;
-      padding: 14px 14px;
+      padding: 14px;
       font-size: 15px;
     }
 
     .readonly-pill {
       min-height: 50px;
       border-radius: 14px;
-      padding: 14px 14px;
+      padding: 14px;
       display: flex;
       align-items: center;
       background: #fbfcfd;
@@ -288,10 +281,6 @@
       color: var(--purple);
     }
 
-    .readonly-pill.danger {
-      color: var(--danger);
-    }
-
     .remove-btn {
       width: 42px;
       height: 42px;
@@ -301,7 +290,6 @@
       color: var(--muted);
       cursor: pointer;
       font-size: 18px;
-      transition: 0.2s ease;
     }
 
     .remove-btn:hover {
@@ -316,27 +304,6 @@
       gap: 18px;
       margin-bottom: 20px;
       align-items: end;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 32px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-family: "MegaFon Graphik LC Medium", sans-serif;
-    }
-
-    .badge.success {
-      background: rgba(0, 185, 86, 0.1);
-      color: var(--green);
-    }
-
-    .badge.muted {
-      background: #f2f4f7;
-      color: var(--muted);
     }
 
     .inline-stats {
@@ -358,6 +325,26 @@
     .inline-stat strong {
       font-family: "MegaFon Graphik LC Semibold", sans-serif;
       color: var(--purple);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-family: "MegaFon Graphik LC Medium", sans-serif;
+    }
+
+    .badge.success {
+      background: rgba(0, 185, 86, 0.1);
+      color: var(--green);
+    }
+
+    .badge.muted {
+      background: #f2f4f7;
+      color: var(--muted);
     }
 
     .summary-grid {
@@ -405,7 +392,6 @@
 
     @media (max-width: 1100px) {
       .grid-4,
-      .grid-5,
       .summary-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -434,7 +420,6 @@
 
       .grid-3,
       .grid-4,
-      .grid-5,
       .summary-grid {
         grid-template-columns: 1fr;
       }
@@ -445,27 +430,26 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="page-title">
-      <span class="icon">💎</span>
+      <span>💎</span>
       <span>Experience Value Model</span>
     </div>
 
     <section class="card">
       <h2 class="section-title">1. Глобальные константы сценария</h2>
-      <p class="subhint">
-        Базовая экономика продукта и верхнеуровневые параметры сценария.
-      </p>
+      <p class="subhint">Базовая экономика продукта и верхнеуровневые параметры сценария.</p>
 
       <div class="grid-3">
         <div class="field">
-          <label for="scenarioStart">Вход в сценарий (старт)</label>
+          <label for="scenarioStart">Вход в сценарий</label>
           <input id="scenarioStart" type="number" min="0" step="1" placeholder="0" />
         </div>
 
         <div class="field">
-          <label for="scenarioFinal">Финальные сделки (выход)</label>
+          <label for="scenarioFinal">Финальные сделки</label>
           <input id="scenarioFinal" type="number" min="0" step="1" placeholder="0" />
         </div>
 
@@ -477,22 +461,22 @@
 
       <div class="grid-4">
         <div class="field">
-          <label for="aov">AOV (выручка, ₽)</label>
+          <label for="aov">AOV, ₽</label>
           <input id="aov" type="number" min="0" step="1" placeholder="0" />
         </div>
 
         <div class="field">
-          <label for="arpu">ARPU (подписка, ₽)</label>
+          <label for="arpu">ARPU, ₽</label>
           <input id="arpu" type="number" min="0" step="1" placeholder="0" />
         </div>
 
         <div class="field">
-          <label for="lt">Lifetime (месяцев)</label>
+          <label for="lt">Lifetime, месяцев</label>
           <input id="lt" type="number" min="0" step="1" placeholder="0" />
         </div>
 
         <div class="metric-box">
-          <div class="label">Итоговый LTV клиента</div>
+          <div class="label">LTV клиента</div>
           <div id="ltvValue" class="value">0 ₽</div>
         </div>
       </div>
@@ -500,9 +484,7 @@
 
     <section class="card">
       <h2 class="section-title">2. Потенциал этапов воронки</h2>
-      <p class="subhint">
-        Заполняются название этапа, вход и выход. Остальные показатели рассчитываются автоматически.
-      </p>
+      <p class="subhint">Заполни название этапа, вход и выход. Остальное считается автоматически.</p>
 
       <div class="table-wrap">
         <table>
@@ -513,7 +495,7 @@
               <th>Выход</th>
               <th>Потери</th>
               <th>CR шага</th>
-              <th>D-CR</th>
+              <th>Downstream CR</th>
               <th>Pot. Deals</th>
               <th>Pot. AOV</th>
               <th>Pot. LTV</th>
@@ -533,20 +515,18 @@
 
     <section class="card">
       <h2 class="section-title">3. Оценка проблем на этапе</h2>
-      <p class="subhint">
-        Денежный потенциал выбранного этапа распределяется между проблемами по их friction index.
-      </p>
+      <p class="subhint">Денежный потенциал выбранного этапа распределяется между проблемами через friction index.</p>
 
       <div class="analysis-toolbar">
         <div class="field">
-          <label for="stageSelector">Выберите этап для анализа</label>
+          <label for="stageSelector">Этап для анализа</label>
           <select id="stageSelector"></select>
         </div>
 
         <div class="inline-stats">
           <div class="inline-stat">Потенциал AOV: <strong id="selectedStageAov">0 ₽</strong></div>
           <div class="inline-stat">Потенциал LTV: <strong id="selectedStageLtv">0 ₽</strong></div>
-          <div class="inline-stat">Потери на этапе: <strong id="selectedStageLosses">0</strong></div>
+          <div class="inline-stat">Потери: <strong id="selectedStageLosses">0</strong></div>
           <div class="inline-stat">Downstream CR: <strong id="selectedStageDcr">0%</strong></div>
         </div>
       </div>
@@ -556,12 +536,12 @@
           <thead>
             <tr>
               <th>Описание проблемы</th>
-              <th>Reach (охват)</th>
-              <th>Impact (сила)</th>
+              <th>Reach</th>
+              <th>Impact</th>
               <th>Confidence</th>
-              <th>Индекс (F)</th>
+              <th>Friction Index</th>
               <th>Статус</th>
-              <th>Вес (%)</th>
+              <th>Вес</th>
               <th>AOV Cost</th>
               <th>LTV Cost</th>
               <th></th>
@@ -580,14 +560,17 @@
           <div class="summary-label">Коммерческих проблем</div>
           <div id="commercialCount" class="summary-value purple">0</div>
         </div>
+
         <div class="summary-card">
           <div class="summary-label">Гигиенических проблем</div>
           <div id="hygieneCount" class="summary-value">0</div>
         </div>
+
         <div class="summary-card">
-          <div class="summary-label">Суммарный Index этапа</div>
+          <div class="summary-label">Суммарный Index</div>
           <div id="sumFValue" class="summary-value green">0.000</div>
         </div>
+
         <div class="summary-card">
           <div class="summary-label">Распределённый LTV</div>
           <div id="distributedLtv" class="summary-value purple">0 ₽</div>
@@ -595,29 +578,29 @@
       </div>
 
       <div class="footer-note">
-        Правило фильтра шума: если <strong>Impact &lt; 0.05</strong>, проблема получает статус “Без влияния” и не участвует в финансовом распределении.
+        Если Impact &lt; 0.05, проблема считается гигиенической и не участвует в финансовом распределении.
       </div>
     </section>
   </div>
 
   <script>
     const reachOptions = [
-      { value: 1.0, label: "1.0 (Global)" },
-      { value: 0.5, label: "0.5 (Significant)" },
-      { value: 0.1, label: "0.1 (Local)" }
+      { value: 1.0, label: "1.0 Global" },
+      { value: 0.5, label: "0.5 Significant" },
+      { value: 0.1, label: "0.1 Local" }
     ];
 
     const impactOptions = [
-      { value: 1.0, label: "1.0 (Blocker)" },
-      { value: 0.5, label: "0.5 (Critical)" },
-      { value: 0.2, label: "0.2 (Friction)" },
-      { value: 0.01, label: "0.01 (Minor)" }
+      { value: 1.0, label: "1.0 Blocker" },
+      { value: 0.5, label: "0.5 Critical" },
+      { value: 0.2, label: "0.2 Friction" },
+      { value: 0.01, label: "0.01 Minor" }
     ];
 
     const confidenceOptions = [
-      { value: 1.0, label: "1.0 (Data)" },
-      { value: 0.7, label: "0.7 (Research)" },
-      { value: 0.2, label: "0.2 (Hypothesis)" }
+      { value: 1.0, label: "1.0 Data" },
+      { value: 0.7, label: "0.7 Research" },
+      { value: 0.2, label: "0.2 Hypothesis" }
     ];
 
     const state = {
@@ -684,20 +667,31 @@
       return `${formatNumber(value, 0)} ₽`;
     }
 
-    function createOptionList(options, selectedValue) {
-      return options.map(opt => `
-        <option value="${opt.value}" ${Number(opt.value) === Number(selectedValue) ? "selected" : ""}>
-          ${opt.label}
-        </option>
-      `).join("");
-    }
-
-    function getLtv() {
-      return n(els.aov.value) + (n(els.arpu.value) * n(els.lt.value));
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
     function getAov() {
       return n(els.aov.value);
+    }
+
+    function getLtv() {
+      return n(els.aov.value) + n(els.arpu.value) * n(els.lt.value);
+    }
+
+    function renderTopMetrics() {
+      const start = n(els.scenarioStart.value);
+      const finalDeals = n(els.scenarioFinal.value);
+      const totalCR = safeDiv(finalDeals, start);
+      const ltv = getLtv();
+
+      els.totalScenarioCR.textContent = formatPercent(totalCR, 2);
+      els.ltvValue.textContent = formatMoney(ltv);
     }
 
     function computeStageMetrics() {
@@ -737,49 +731,92 @@
     }
 
     function getSelectedStageComputed() {
-      const computed = computeStageMetrics();
-      return computed.find(s => s.id === state.selectedStageId) || null;
+      return computeStageMetrics().find(stage => stage.id === state.selectedStageId) || null;
     }
 
-    function renderTopMetrics() {
-      const start = n(els.scenarioStart.value);
-      const finalDeals = n(els.scenarioFinal.value);
-      const totalCR = safeDiv(finalDeals, start);
-      const ltv = getLtv();
-
-      els.totalScenarioCR.textContent = formatPercent(totalCR, 2);
-      els.ltvValue.textContent = formatMoney(ltv);
+    function createOptionList(options, selectedValue) {
+      return options.map(opt => `
+        <option value="${opt.value}" ${Number(opt.value) === Number(selectedValue) ? "selected" : ""}>
+          ${opt.label}
+        </option>
+      `).join("");
     }
 
     function renderStages() {
       const computed = computeStageMetrics();
 
       els.stagesTableBody.innerHTML = computed.map(stage => `
-        <tr class="row-card">
+        <tr>
           <td class="cell-input">
             <input type="text" value="${escapeHtml(stage.name)}" data-stage-id="${stage.id}" data-field="name" placeholder="Название этапа" />
           </td>
+
           <td class="cell-input">
             <input type="number" min="0" step="1" value="${stage.input}" data-stage-id="${stage.id}" data-field="input" placeholder="0" />
           </td>
+
           <td class="cell-input">
             <input type="number" min="0" step="1" value="${stage.output}" data-stage-id="${stage.id}" data-field="output" placeholder="0" />
           </td>
+
           <td><div class="readonly-pill">${formatNumber(stage.losses)}</div></td>
           <td><div class="readonly-pill">${formatPercent(stage.cr, 1)}</div></td>
           <td><div class="readonly-pill strong green">${formatPercent(stage.dcr, 2)}</div></td>
           <td><div class="readonly-pill strong">${formatNumber(stage.potentialDeals, 0)}</div></td>
           <td><div class="readonly-pill purple">${formatMoney(stage.potentialAov)}</div></td>
           <td><div class="readonly-pill strong purple">${formatMoney(stage.potentialLtv)}</div></td>
+
           <td>
-            <button class="remove-btn" data-remove-stage="${stage.id}" title="Удалить этап">×</button>
+            <button class="remove-btn" data-remove-stage="${stage.id}">×</button>
           </td>
         </tr>
       `).join("");
 
       bindStageEvents();
       renderStageSelector();
-      renderProblemStageSummary();
+    }
+
+    function bindStageEvents() {
+      els.stagesTableBody.querySelectorAll("input").forEach(input => {
+        const isTextField = input.dataset.field === "name";
+
+        if (isTextField) {
+          input.addEventListener("input", e => {
+            const id = e.target.dataset.stageId;
+            const stage = state.stages.find(s => s.id === id);
+            if (stage) stage.name = e.target.value;
+          });
+
+          input.addEventListener("blur", () => {
+            renderStages();
+            renderProblems();
+          });
+        } else {
+          input.addEventListener("input", e => {
+            const id = e.target.dataset.stageId;
+            const field = e.target.dataset.field;
+            const stage = state.stages.find(s => s.id === id);
+            if (!stage) return;
+
+            stage[field] = n(e.target.value);
+            rerenderCalculatedOnly();
+          });
+        }
+      });
+
+      els.stagesTableBody.querySelectorAll("[data-remove-stage]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.removeStage;
+          state.stages = state.stages.filter(s => s.id !== id);
+          delete state.problemsByStage[id];
+
+          if (state.selectedStageId === id) {
+            state.selectedStageId = state.stages[0]?.id || null;
+          }
+
+          rerenderAll();
+        });
+      });
     }
 
     function renderStageSelector() {
@@ -788,7 +825,6 @@
       if (!stages.length) {
         els.stageSelector.innerHTML = `<option value="">Нет этапов</option>`;
         state.selectedStageId = null;
-        renderProblems();
         return;
       }
 
@@ -811,10 +847,6 @@
         els.selectedStageLtv.textContent = formatMoney(0);
         els.selectedStageLosses.textContent = "0";
         els.selectedStageDcr.textContent = "0%";
-        els.commercialCount.textContent = "0";
-        els.hygieneCount.textContent = "0";
-        els.sumFValue.textContent = "0.000";
-        els.distributedLtv.textContent = formatMoney(0);
         return;
       }
 
@@ -822,16 +854,6 @@
       els.selectedStageLtv.textContent = formatMoney(stage.potentialLtv);
       els.selectedStageLosses.textContent = formatNumber(stage.losses);
       els.selectedStageDcr.textContent = formatPercent(stage.dcr, 2);
-
-      const problems = state.problemsByStage[state.selectedStageId] || [];
-      const commercial = problems.filter(p => n(p.impact) >= 0.05);
-      const hygiene = problems.filter(p => n(p.impact) < 0.05);
-      const sumF = commercial.reduce((acc, p) => acc + (n(p.reach) * n(p.impact) * n(p.confidence)), 0);
-
-      els.commercialCount.textContent = String(commercial.length);
-      els.hygieneCount.textContent = String(hygiene.length);
-      els.sumFValue.textContent = formatNumber(sumF, 3);
-      els.distributedLtv.textContent = formatMoney(stage.potentialLtv);
     }
 
     function renderProblems() {
@@ -840,12 +862,13 @@
       if (!stage) {
         els.problemsTableBody.innerHTML = "";
         renderProblemStageSummary();
+        renderProblemSummary([]);
         return;
       }
 
       const problems = state.problemsByStage[state.selectedStageId] || [];
       const commercialProblems = problems.filter(p => n(p.impact) >= 0.05);
-      const sumF = commercialProblems.reduce((acc, p) => acc + (n(p.reach) * n(p.impact) * n(p.confidence)), 0);
+      const sumF = commercialProblems.reduce((acc, p) => acc + n(p.reach) * n(p.impact) * n(p.confidence), 0);
 
       els.problemsTableBody.innerHTML = problems.map(problem => {
         const F = n(problem.reach) * n(problem.impact) * n(problem.confidence);
@@ -853,37 +876,47 @@
         const weight = isCommercial && sumF > 0 ? F / sumF : 0;
         const aovCost = stage.potentialAov * weight;
         const ltvCost = stage.potentialLtv * weight;
-        const statusHtml = isCommercial
-          ? `<span class="badge success">Коммерческая</span>`
-          : `<span class="badge muted">Без влияния</span>`;
 
         return `
-          <tr class="row-card">
+          <tr>
             <td class="cell-input">
-              <input type="text" value="${escapeHtml(problem.description)}" data-problem-id="${problem.id}" data-field="description" placeholder="Описание барьера..." />
+              <input type="text" value="${escapeHtml(problem.description)}" data-problem-id="${problem.id}" data-field="description" placeholder="Описание барьера" />
             </td>
+
             <td class="cell-input">
               <select data-problem-id="${problem.id}" data-field="reach">
                 ${createOptionList(reachOptions, problem.reach)}
               </select>
             </td>
+
             <td class="cell-input">
               <select data-problem-id="${problem.id}" data-field="impact">
                 ${createOptionList(impactOptions, problem.impact)}
               </select>
             </td>
+
             <td class="cell-input">
               <select data-problem-id="${problem.id}" data-field="confidence">
                 ${createOptionList(confidenceOptions, problem.confidence)}
               </select>
             </td>
+
             <td><div class="readonly-pill strong">${formatNumber(F, 3)}</div></td>
-            <td>${statusHtml}</td>
+
+            <td>
+              ${
+                isCommercial
+                  ? '<span class="badge success">Коммерческая</span>'
+                  : '<span class="badge muted">Без влияния</span>'
+              }
+            </td>
+
             <td><div class="readonly-pill">${formatPercent(weight, 1)}</div></td>
             <td><div class="readonly-pill purple">${formatMoney(aovCost)}</div></td>
             <td><div class="readonly-pill strong purple">${formatMoney(ltvCost)}</div></td>
+
             <td>
-              <button class="remove-btn" data-remove-problem="${problem.id}" title="Удалить проблему">×</button>
+              <button class="remove-btn" data-remove-problem="${problem.id}">×</button>
             </td>
           </tr>
         `;
@@ -891,57 +924,68 @@
 
       bindProblemEvents();
       renderProblemStageSummary();
-    }
-
-    function bindStageEvents() {
-      els.stagesTableBody.querySelectorAll("input").forEach(input => {
-        input.addEventListener("input", (e) => {
-          const id = e.target.dataset.stageId;
-          const field = e.target.dataset.field;
-          const stage = state.stages.find(s => s.id === id);
-          if (!stage) return;
-          stage[field] = field === "name" ? e.target.value : n(e.target.value);
-          rerenderAll();
-        });
-      });
-
-      els.stagesTableBody.querySelectorAll("[data-remove-stage]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const id = btn.dataset.removeStage;
-          state.stages = state.stages.filter(s => s.id !== id);
-          delete state.problemsByStage[id];
-          if (state.selectedStageId === id) state.selectedStageId = null;
-          rerenderAll();
-        });
-      });
+      renderProblemSummary(problems);
     }
 
     function bindProblemEvents() {
       els.problemsTableBody.querySelectorAll("input, select").forEach(input => {
-        input.addEventListener("input", onProblemFieldChange);
-        input.addEventListener("change", onProblemFieldChange);
+        const isDescription = input.dataset.field === "description";
+
+        if (isDescription) {
+          input.addEventListener("input", e => {
+            const problem = getProblemById(e.target.dataset.problemId);
+            if (problem) problem.description = e.target.value;
+          });
+
+          input.addEventListener("blur", renderProblems);
+        } else {
+          input.addEventListener("change", e => {
+            const problem = getProblemById(e.target.dataset.problemId);
+            if (!problem) return;
+
+            problem[e.target.dataset.field] = Number(e.target.value);
+            renderProblems();
+          });
+        }
       });
 
       els.problemsTableBody.querySelectorAll("[data-remove-problem]").forEach(btn => {
         btn.addEventListener("click", () => {
-          if (!state.selectedStageId) return;
           const id = btn.dataset.removeProblem;
           state.problemsByStage[state.selectedStageId] =
             (state.problemsByStage[state.selectedStageId] || []).filter(p => p.id !== id);
+
           renderProblems();
         });
       });
     }
 
-    function onProblemFieldChange(e) {
-      if (!state.selectedStageId) return;
-      const id = e.target.dataset.problemId;
-      const field = e.target.dataset.field;
+    function getProblemById(id) {
       const list = state.problemsByStage[state.selectedStageId] || [];
-      const problem = list.find(p => p.id === id);
-      if (!problem) return;
+      return list.find(problem => problem.id === id);
+    }
 
-      problem[field] = field === "description" ? e.target.value : Number(e.target.value);
+    function renderProblemSummary(problems) {
+      const commercial = problems.filter(p => n(p.impact) >= 0.05);
+      const hygiene = problems.filter(p => n(p.impact) < 0.05);
+      const sumF = commercial.reduce((acc, p) => acc + n(p.reach) * n(p.impact) * n(p.confidence), 0);
+      const stage = getSelectedStageComputed();
+
+      els.commercialCount.textContent = commercial.length;
+      els.hygieneCount.textContent = hygiene.length;
+      els.sumFValue.textContent = formatNumber(sumF, 3);
+      els.distributedLtv.textContent = formatMoney(stage ? stage.potentialLtv : 0);
+    }
+
+    function rerenderCalculatedOnly() {
+      renderTopMetrics();
+      renderStages();
+      renderProblems();
+    }
+
+    function rerenderAll() {
+      renderTopMetrics();
+      renderStages();
       renderProblems();
     }
 
@@ -952,14 +996,20 @@
         input: 0,
         output: 0
       };
+
       state.stages.push(newStage);
-      if (!state.problemsByStage[newStage.id]) state.problemsByStage[newStage.id] = [];
-      if (!state.selectedStageId) state.selectedStageId = newStage.id;
+      state.problemsByStage[newStage.id] = [];
+
+      if (!state.selectedStageId) {
+        state.selectedStageId = newStage.id;
+      }
+
       rerenderAll();
     }
 
     function addProblem(problem = null) {
       if (!state.selectedStageId) return;
+
       const newProblem = problem || {
         id: uid("problem"),
         description: "",
@@ -967,16 +1017,12 @@
         impact: 0.2,
         confidence: 0.7
       };
+
       if (!state.problemsByStage[state.selectedStageId]) {
         state.problemsByStage[state.selectedStageId] = [];
       }
-      state.problemsByStage[state.selectedStageId].push(newProblem);
-      renderProblems();
-    }
 
-    function rerenderAll() {
-      renderTopMetrics();
-      renderStages();
+      state.problemsByStage[state.selectedStageId].push(newProblem);
       renderProblems();
     }
 
@@ -1007,21 +1053,21 @@
       state.problemsByStage[demoStages[2].id] = [
         {
           id: uid("problem"),
-          description: "Ошибка входа в ЛК",
+          description: "Длительное согласование КП",
           reach: 1.0,
           impact: 0.5,
           confidence: 0.7
         },
         {
           id: uid("problem"),
-          description: "Долгая отгрузка оборудования",
+          description: "Разрозненные коммуникации",
           reach: 0.5,
           impact: 0.2,
-          confidence: 1.0
+          confidence: 0.7
         },
         {
           id: uid("problem"),
-          description: "Опечатка в письме",
+          description: "Минорная текстовая ошибка",
           reach: 1.0,
           impact: 0.01,
           confidence: 1.0
@@ -1050,27 +1096,22 @@
       });
     }
 
-    function escapeHtml(str) {
-      return String(str ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
     els.addStageBtn.addEventListener("click", () => addStage());
     els.addProblemBtn.addEventListener("click", () => addProblem());
     els.fillDemoBtn.addEventListener("click", fillDemo);
     els.clearAllBtn.addEventListener("click", clearAll);
 
-    els.stageSelector.addEventListener("change", (e) => {
+    els.stageSelector.addEventListener("change", e => {
       state.selectedStageId = e.target.value;
       renderProblems();
     });
 
     [els.scenarioStart, els.scenarioFinal, els.aov, els.arpu, els.lt].forEach(input => {
-      input.addEventListener("input", rerenderAll);
+      input.addEventListener("input", () => {
+        renderTopMetrics();
+        renderStages();
+        renderProblems();
+      });
     });
 
     clearAll();
