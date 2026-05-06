@@ -704,18 +704,17 @@
       stages.forEach(stage => {
         stage.losses = Math.max(stage.input - stage.output, 0);
         stage.cr = safeDiv(stage.output, stage.input);
-        stage.dcr = 0;
+        stage.dcr = 1;
         stage.potentialDeals = 0;
         stage.potentialAov = 0;
         stage.potentialLtv = 0;
       });
 
+      let downstreamCr = 1;
+
       for (let i = stages.length - 1; i >= 0; i--) {
-        if (i === stages.length - 1) {
-          stages[i].dcr = stages[i].cr;
-        } else {
-          stages[i].dcr = stages[i].cr * stages[i + 1].dcr;
-        }
+        stages[i].dcr = downstreamCr;
+        downstreamCr *= stages[i].cr;
       }
 
       const aov = getAov();
@@ -759,15 +758,15 @@
             <input type="number" min="0" step="1" value="${stage.output}" data-stage-id="${stage.id}" data-field="output" placeholder="0" />
           </td>
 
-          <td><div class="readonly-pill">${formatNumber(stage.losses)}</div></td>
-          <td><div class="readonly-pill">${formatPercent(stage.cr, 1)}</div></td>
-          <td><div class="readonly-pill strong green">${formatPercent(stage.dcr, 2)}</div></td>
-          <td><div class="readonly-pill strong">${formatNumber(stage.potentialDeals, 0)}</div></td>
-          <td><div class="readonly-pill purple">${formatMoney(stage.potentialAov)}</div></td>
-          <td><div class="readonly-pill strong purple">${formatMoney(stage.potentialLtv)}</div></td>
+          <td><div class="readonly-pill" data-stage-metric="losses" data-stage-id="${stage.id}">${formatNumber(stage.losses)}</div></td>
+          <td><div class="readonly-pill" data-stage-metric="cr" data-stage-id="${stage.id}">${formatPercent(stage.cr, 1)}</div></td>
+          <td><div class="readonly-pill strong green" data-stage-metric="dcr" data-stage-id="${stage.id}">${formatPercent(stage.dcr, 2)}</div></td>
+          <td><div class="readonly-pill strong" data-stage-metric="potentialDeals" data-stage-id="${stage.id}">${formatNumber(stage.potentialDeals, 0)}</div></td>
+          <td><div class="readonly-pill purple" data-stage-metric="potentialAov" data-stage-id="${stage.id}">${formatMoney(stage.potentialAov)}</div></td>
+          <td><div class="readonly-pill strong purple" data-stage-metric="potentialLtv" data-stage-id="${stage.id}">${formatMoney(stage.potentialLtv)}</div></td>
 
           <td>
-            <button class="remove-btn" data-remove-stage="${stage.id}">×</button>
+            <button class="remove-btn" data-remove-stage="${stage.id}" aria-label="Удалить этап">×</button>
           </td>
         </tr>
       `).join("");
@@ -776,32 +775,47 @@
       renderStageSelector();
     }
 
+    function updateStageCalculatedCells() {
+      const computed = computeStageMetrics();
+
+      computed.forEach(stage => {
+        const metricFormatters = {
+          losses: value => formatNumber(value),
+          cr: value => formatPercent(value, 1),
+          dcr: value => formatPercent(value, 2),
+          potentialDeals: value => formatNumber(value, 0),
+          potentialAov: value => formatMoney(value),
+          potentialLtv: value => formatMoney(value)
+        };
+
+        Object.entries(metricFormatters).forEach(([metric, formatter]) => {
+          const cell = els.stagesTableBody.querySelector(
+            `[data-stage-id="${stage.id}"][data-stage-metric="${metric}"]`
+          );
+
+          if (cell) {
+            cell.textContent = formatter(stage[metric]);
+          }
+        });
+      });
+    }
+
     function bindStageEvents() {
       els.stagesTableBody.querySelectorAll("input").forEach(input => {
-        const isTextField = input.dataset.field === "name";
+        input.addEventListener("input", e => {
+          const id = e.target.dataset.stageId;
+          const field = e.target.dataset.field;
+          const stage = state.stages.find(s => s.id === id);
+          if (!stage) return;
 
-        if (isTextField) {
-          input.addEventListener("input", e => {
-            const id = e.target.dataset.stageId;
-            const stage = state.stages.find(s => s.id === id);
-            if (stage) stage.name = e.target.value;
-          });
+          stage[field] = field === "name" ? e.target.value : n(e.target.value);
 
-          input.addEventListener("blur", () => {
-            renderStages();
-            renderProblems();
-          });
-        } else {
-          input.addEventListener("input", e => {
-            const id = e.target.dataset.stageId;
-            const field = e.target.dataset.field;
-            const stage = state.stages.find(s => s.id === id);
-            if (!stage) return;
-
-            stage[field] = n(e.target.value);
-            rerenderCalculatedOnly();
-          });
-        }
+          if (field === "name") {
+            renderStageSelector();
+          } else {
+            updateCalculatedViews();
+          }
+        });
       });
 
       els.stagesTableBody.querySelectorAll("[data-remove-stage]").forEach(btn => {
@@ -856,6 +870,26 @@
       els.selectedStageDcr.textContent = formatPercent(stage.dcr, 2);
     }
 
+    function getProblemRowsData(problems, stage) {
+      const commercialProblems = problems.filter(p => n(p.impact) >= 0.05);
+      const sumF = commercialProblems.reduce((acc, p) => acc + n(p.reach) * n(p.impact) * n(p.confidence), 0);
+
+      return problems.map(problem => {
+        const frictionIndex = n(problem.reach) * n(problem.impact) * n(problem.confidence);
+        const isCommercial = n(problem.impact) >= 0.05;
+        const weight = isCommercial && sumF > 0 ? frictionIndex / sumF : 0;
+
+        return {
+          problem,
+          frictionIndex,
+          isCommercial,
+          weight,
+          aovCost: stage.potentialAov * weight,
+          ltvCost: stage.potentialLtv * weight
+        };
+      });
+    }
+
     function renderProblems() {
       const stage = getSelectedStageComputed();
 
@@ -867,62 +901,98 @@
       }
 
       const problems = state.problemsByStage[state.selectedStageId] || [];
-      const commercialProblems = problems.filter(p => n(p.impact) >= 0.05);
-      const sumF = commercialProblems.reduce((acc, p) => acc + n(p.reach) * n(p.impact) * n(p.confidence), 0);
+      const rowsData = getProblemRowsData(problems, stage);
 
-      els.problemsTableBody.innerHTML = problems.map(problem => {
-        const F = n(problem.reach) * n(problem.impact) * n(problem.confidence);
-        const isCommercial = n(problem.impact) >= 0.05;
-        const weight = isCommercial && sumF > 0 ? F / sumF : 0;
-        const aovCost = stage.potentialAov * weight;
-        const ltvCost = stage.potentialLtv * weight;
+      els.problemsTableBody.innerHTML = rowsData.map(row => `
+        <tr>
+          <td class="cell-input">
+            <input type="text" value="${escapeHtml(row.problem.description)}" data-problem-id="${row.problem.id}" data-field="description" placeholder="Описание барьера" />
+          </td>
 
-        return `
-          <tr>
-            <td class="cell-input">
-              <input type="text" value="${escapeHtml(problem.description)}" data-problem-id="${problem.id}" data-field="description" placeholder="Описание барьера" />
-            </td>
+          <td class="cell-input">
+            <select data-problem-id="${row.problem.id}" data-field="reach">
+              ${createOptionList(reachOptions, row.problem.reach)}
+            </select>
+          </td>
 
-            <td class="cell-input">
-              <select data-problem-id="${problem.id}" data-field="reach">
-                ${createOptionList(reachOptions, problem.reach)}
-              </select>
-            </td>
+          <td class="cell-input">
+            <select data-problem-id="${row.problem.id}" data-field="impact">
+              ${createOptionList(impactOptions, row.problem.impact)}
+            </select>
+          </td>
 
-            <td class="cell-input">
-              <select data-problem-id="${problem.id}" data-field="impact">
-                ${createOptionList(impactOptions, problem.impact)}
-              </select>
-            </td>
+          <td class="cell-input">
+            <select data-problem-id="${row.problem.id}" data-field="confidence">
+              ${createOptionList(confidenceOptions, row.problem.confidence)}
+            </select>
+          </td>
 
-            <td class="cell-input">
-              <select data-problem-id="${problem.id}" data-field="confidence">
-                ${createOptionList(confidenceOptions, problem.confidence)}
-              </select>
-            </td>
+          <td><div class="readonly-pill strong" data-problem-metric="frictionIndex" data-problem-id="${row.problem.id}">${formatNumber(row.frictionIndex, 3)}</div></td>
 
-            <td><div class="readonly-pill strong">${formatNumber(F, 3)}</div></td>
+          <td data-problem-metric="status" data-problem-id="${row.problem.id}">
+            ${getProblemStatusBadge(row.isCommercial)}
+          </td>
 
-            <td>
-              ${
-                isCommercial
-                  ? '<span class="badge success">Коммерческая</span>'
-                  : '<span class="badge muted">Без влияния</span>'
-              }
-            </td>
+          <td><div class="readonly-pill" data-problem-metric="weight" data-problem-id="${row.problem.id}">${formatPercent(row.weight, 1)}</div></td>
+          <td><div class="readonly-pill purple" data-problem-metric="aovCost" data-problem-id="${row.problem.id}">${formatMoney(row.aovCost)}</div></td>
+          <td><div class="readonly-pill strong purple" data-problem-metric="ltvCost" data-problem-id="${row.problem.id}">${formatMoney(row.ltvCost)}</div></td>
 
-            <td><div class="readonly-pill">${formatPercent(weight, 1)}</div></td>
-            <td><div class="readonly-pill purple">${formatMoney(aovCost)}</div></td>
-            <td><div class="readonly-pill strong purple">${formatMoney(ltvCost)}</div></td>
-
-            <td>
-              <button class="remove-btn" data-remove-problem="${problem.id}">×</button>
-            </td>
-          </tr>
-        `;
-      }).join("");
+          <td>
+            <button class="remove-btn" data-remove-problem="${row.problem.id}" aria-label="Удалить проблему">×</button>
+          </td>
+        </tr>
+      `).join("");
 
       bindProblemEvents();
+      renderProblemStageSummary();
+      renderProblemSummary(problems);
+    }
+
+    function getProblemStatusBadge(isCommercial) {
+      return isCommercial
+        ? '<span class="badge success">Коммерческая</span>'
+        : '<span class="badge muted">Без влияния</span>';
+    }
+
+    function updateProblemCalculatedCells() {
+      const stage = getSelectedStageComputed();
+      const problems = state.problemsByStage[state.selectedStageId] || [];
+
+      if (!stage || !problems.length) {
+        renderProblemStageSummary();
+        renderProblemSummary(problems);
+        return;
+      }
+
+      const rowsData = getProblemRowsData(problems, stage);
+
+      rowsData.forEach(row => {
+        const metricFormatters = {
+          frictionIndex: value => formatNumber(value, 3),
+          weight: value => formatPercent(value, 1),
+          aovCost: value => formatMoney(value),
+          ltvCost: value => formatMoney(value)
+        };
+
+        Object.entries(metricFormatters).forEach(([metric, formatter]) => {
+          const cell = els.problemsTableBody.querySelector(
+            `[data-problem-id="${row.problem.id}"][data-problem-metric="${metric}"]`
+          );
+
+          if (cell) {
+            cell.textContent = formatter(row[metric]);
+          }
+        });
+
+        const statusCell = els.problemsTableBody.querySelector(
+          `[data-problem-id="${row.problem.id}"][data-problem-metric="status"]`
+        );
+
+        if (statusCell) {
+          statusCell.innerHTML = getProblemStatusBadge(row.isCommercial);
+        }
+      });
+
       renderProblemStageSummary();
       renderProblemSummary(problems);
     }
@@ -936,15 +1006,13 @@
             const problem = getProblemById(e.target.dataset.problemId);
             if (problem) problem.description = e.target.value;
           });
-
-          input.addEventListener("blur", renderProblems);
         } else {
           input.addEventListener("change", e => {
             const problem = getProblemById(e.target.dataset.problemId);
             if (!problem) return;
 
             problem[e.target.dataset.field] = Number(e.target.value);
-            renderProblems();
+            updateProblemCalculatedCells();
           });
         }
       });
@@ -970,17 +1038,19 @@
       const hygiene = problems.filter(p => n(p.impact) < 0.05);
       const sumF = commercial.reduce((acc, p) => acc + n(p.reach) * n(p.impact) * n(p.confidence), 0);
       const stage = getSelectedStageComputed();
+      const distributedLtv = commercial.length && stage ? stage.potentialLtv : 0;
 
       els.commercialCount.textContent = commercial.length;
       els.hygieneCount.textContent = hygiene.length;
       els.sumFValue.textContent = formatNumber(sumF, 3);
-      els.distributedLtv.textContent = formatMoney(stage ? stage.potentialLtv : 0);
+      els.distributedLtv.textContent = formatMoney(distributedLtv);
     }
 
-    function rerenderCalculatedOnly() {
+    function updateCalculatedViews() {
       renderTopMetrics();
-      renderStages();
-      renderProblems();
+      updateStageCalculatedCells();
+      renderProblemStageSummary();
+      updateProblemCalculatedCells();
     }
 
     function rerenderAll() {
@@ -998,7 +1068,7 @@
       };
 
       state.stages.push(newStage);
-      state.problemsByStage[newStage.id] = [];
+      state.problemsByStage[newStage.id] = state.problemsByStage[newStage.id] || [];
 
       if (!state.selectedStageId) {
         state.selectedStageId = newStage.id;
@@ -1107,11 +1177,7 @@
     });
 
     [els.scenarioStart, els.scenarioFinal, els.aov, els.arpu, els.lt].forEach(input => {
-      input.addEventListener("input", () => {
-        renderTopMetrics();
-        renderStages();
-        renderProblems();
-      });
+      input.addEventListener("input", updateCalculatedViews);
     });
 
     clearAll();
